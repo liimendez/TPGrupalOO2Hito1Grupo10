@@ -35,7 +35,7 @@ public class FoodTruck extends UnidadVenta {
 
 	@Override
 	public String toString() {
-	    return super.toString() + "FoodTruck [patente=" + patente
+	    return super.toString() + "\nFoodTruck [patente=" + patente
 	            + ", requiereConexionElectrica=" + requiereConexionElectrica + "]";
 	}
 }
