@@ -1,5 +1,6 @@
 package test;
 
+<<<<<<< HEAD
 import java.time.LocalDate;
 
 import datos.Festival;
@@ -44,3 +45,8 @@ public class TestAgregarPedido {
         System.out.println("Total del pedido: " + pedido.calcularTotal());
     }
 }
+=======
+public class TestAgregarPedido {
+
+}
+>>>>>>> e72ed5073ac1c7caed7fd8222f66461d9040c85e

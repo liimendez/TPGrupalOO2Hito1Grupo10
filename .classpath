@@ -33,8 +33,34 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17">
 		<attributes>
+<<<<<<< HEAD
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+=======
+			<attribute name="module" value="true"/>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/antlr-2.7.7.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/byte-buddy-1.10.7.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/classmate-1.5.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/dom4j-2.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/FastInfoset-1.2.15.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/hibernate-commons-annotations-5.1.0.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/hibernate-core-5.4.11.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/istack-commons-runtime-3.0.7.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/jandex-2.1.1.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/javassist-3.24.0-GA.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/javax.activation-api-1.2.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/javax.persistence-api-2.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/jaxb-api-2.3.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/jaxb-runtime-2.3.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/jboss-logging-3.3.2.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/jboss-transaction-api_1.2_spec-1.1.1.Final.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/mysql-connector-java-8.0.19.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/stax-ex-1.8.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Usuario/Documents/hibernate/txw2-2.3.1.jar"/>
+>>>>>>> e72ed5073ac1c7caed7fd8222f66461d9040c85e
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
