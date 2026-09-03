@@ -12,8 +12,7 @@ public class TestAgregarCajero {
 		
 		CajeroABM cajeroAbm = new CajeroABM();
 		
-		Cajero cajero = new Cajero("Lucas", "Fernandez", "22222222", LocalDate.of(1995, 3, 18), LocalDate.now() ,600000, Cajero.Turno.MANIANA);
-		int id = cajeroAbm.agregar(cajero);
+		int id = cajeroAbm.agregar("Lucas", "Fernandez", "22222222", LocalDate.of(1995, 3, 18), LocalDate.now() ,600000, Cajero.Turno.MANIANA);
 		
 		System.out.println("Cocinero agregado correctamente.");
         System.out.println("ID Cocinero: " + id);

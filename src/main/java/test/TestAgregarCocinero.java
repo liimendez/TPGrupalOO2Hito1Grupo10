@@ -12,8 +12,7 @@ public class TestAgregarCocinero {
 		
 		CocineroABM cocineroABM = new CocineroABM();
 		
-		Cocinero cocinero = new Cocinero("Hernan", "Lopez", "11111111", LocalDate.of(1999, 2, 10), LocalDate.now() ,800000, "Parrillero", 100000);
-		int id = cocineroABM.agregar(cocinero);
+		int id = cocineroABM.agregar("Hernan", "Lopez", "11111111", LocalDate.of(1999, 2, 10), LocalDate.now() ,800000, "Parrillero", 100000);
 		
 		System.out.println("Cocinero agregado correctamente.");
         System.out.println("ID Cocinero: " + id);

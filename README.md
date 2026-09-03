@@ -3,6 +3,15 @@
 Sistema de gestión para el predio ferial "Epicentro Gourmet", desarrollado con
 Java + Hibernate (mapeo XML) + MySQL.
 
+Grupo 10
+
+Cecilia Livia Mendez - liimendez - testConsultaPedido - detallePedido 1 - * pedido.
+Valentin Franco Hegele - FrancoHegele - TestConsultaCocinero - Cocinero - Personal: Herencia 1 a *.
+Santiago Sosa - santisosa-gh - TestConsultaFestival - Festival - UnidadVenta: Uno a Muchos.
+
+
+
+
 ## Requisitos previos
 
 - MySQL corriendo (Wamp) con usuario `root`
@@ -42,3 +51,11 @@ orden:
 - Si es la primera vez que corrés el proyecto en tu máquina, revisá que
   MySQL esté corriendo y que la contraseña en `hibernate.cfg.xml` sea la
   correcta para tu instalación local
+  
+  
+  
+  
+  
+  
+  
+  

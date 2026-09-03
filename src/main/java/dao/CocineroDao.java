@@ -46,6 +46,7 @@ public class CocineroDao {
         }
         return id;
     }
+
     
     
     public Cocinero traer(long idCocinero) {
