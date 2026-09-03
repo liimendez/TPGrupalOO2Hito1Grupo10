@@ -21,5 +21,6 @@ public class TestAgregarPlato {
 
         System.out.println("Platos agregados correctamente.");
         System.out.println("ID Platos: " + idPlato1 + ", " + idPlato2);
-    }
+        
+    } 
 }

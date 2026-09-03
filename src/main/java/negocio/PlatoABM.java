@@ -23,7 +23,7 @@ public class PlatoABM {
 
         plato.setUnidadVenta(unidadVenta);
 
-        return dao.agregar(plato);
+        return dao.agregar(plato); 
     }
 
     public Plato traer(long idPlato) {

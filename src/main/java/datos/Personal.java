@@ -12,7 +12,6 @@ public abstract class Personal {
 	protected String dni;
 	protected LocalDate fechaDeNacimiento;
 	protected LocalDate fechaDeIngreso;
-
 	protected double sueldoBase;
 
 	protected UnidadVenta unidadAsignada;

@@ -25,7 +25,7 @@ public class Cajero extends Personal {
 	    this.turno = turno;
 	}
 
-	/*
+	/* 
 	public Long getId() {
 		return id;
 	}

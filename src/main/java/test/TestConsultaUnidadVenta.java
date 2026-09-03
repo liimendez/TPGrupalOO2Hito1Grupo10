@@ -18,6 +18,8 @@ public class TestConsultaUnidadVenta {
 
         for (Plato plato : platos) {
             System.out.println(plato);
+            
         }
+        
     }
 }

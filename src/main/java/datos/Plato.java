@@ -13,7 +13,7 @@ public class Plato {
 		// Constructor vacio requerido por Hibernate
 	}
 
-	public Plato(String nombre, double precioVenta, double costoProduccion) {
+	public Plato(String nombre, double precioVenta, double costoProduccion) { 
 		this.nombre = nombre;
 		this.precioVenta = precioVenta;
 		this.costoProduccion = costoProduccion;

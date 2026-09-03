@@ -14,16 +14,17 @@ public class Pedido {
 
     private Set<DetallePedido> detalles = new HashSet<>();
 
+    
     protected Pedido() {
         // Constructor vacio requerido por Hibernate
     }
 
-    public Pedido(LocalDate fechaTransaccion, Festival festival, UnidadVenta unidadVenta) {
+    public Pedido(LocalDate fechaTransaccion) {
+    	
         this.fechaTransaccion = fechaTransaccion;
-        this.festival = festival;
-        this.unidadVenta = unidadVenta;
     }
 
+    
     public void agregarDetalle(Plato plato, int cantidad) {
         DetallePedido detalle = new DetallePedido(this, plato, cantidad);
         detalles.add(detalle);
@@ -73,10 +74,7 @@ public class Pedido {
 
     @Override
     public String toString() {
-        return "Pedido [fechaTransaccion=" + fechaTransaccion
-                + ", festival=" + festival.getNombre()
-                + ", unidadVenta=" + unidadVenta.getNombreComercial()
-                + ", total=" + calcularTotal() + "]";
+        return "Pedido [fechaTransaccion=" + fechaTransaccion + ", total=" + calcularTotal() + "]";
     }
 }
 
