@@ -13,16 +13,12 @@ public class DetallePedido {
 	}
 
 	public DetallePedido(Pedido pedido, Plato plato, int cantidad) {
-<<<<<<< HEAD
+
 	    this.pedido = pedido;
 	    this.plato = plato;
 	    this.cantidad = cantidad;
 	    this.subtotal = calcularSubtotal();
-=======
-		this.pedido = pedido;
-		this.plato = plato;
-		this.cantidad = cantidad;
->>>>>>> e72ed5073ac1c7caed7fd8222f66461d9040c85e
+
 	}
 
 	public double calcularSubtotal() {
