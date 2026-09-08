@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "https://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+
+    <class name="datos.Personal" table="personal">
+
+        <!-- ID -->
+        <id name="id" column="id">
+            <generator class="identity"/>
+        </id>
+
+        <!-- Atributos - Columnas -->
+        <property name="nombre"
+                  column="nombre"
+                  type="string"
+                  not-null="true"/>
+
+        <property name="apellido"
+                  column="apellido"
+                  type="string"
+                  not-null="true"/>
+
+        <property name="dni"
+                  column="dni"
+                  type="string"
+                  unique="true"
+                  length="8"
+                  not-null="true"/>
+
+        <property name="fechaDeNacimiento"
+                  column="fecha_de_nacimiento"
+                  type="java.time.LocalDate"
+                  not-null="true"/>
+
+        <property name="fechaDeIngreso"
+                  column="fecha_de_ingreso"
+                  type="java.time.LocalDate"
+                  not-null="true"/>
+
+        <property name="sueldoBase"
+                  column="sueldo_base"
+                  type="double"
+                  not-null="true"/>
+
+        <!-- Relación con UnidadVenta -->
+        <many-to-one name="unidadAsignada"
+                     class="datos.UnidadVenta"
+                     column="unidad_venta_id"/>
+
+    </class>
+
+</hibernate-mapping>
+
