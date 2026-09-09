@@ -10,7 +10,7 @@ public class TestConsultaPuestoDesarmable {
 
     public static void main(String[] args) {
 
-        PuestoDesarmableABM abm = new PuestoDesarmableABM();
+        PuestoDesarmableABM abm = PuestoDesarmableABM.getInstancia();
 
         PuestoDesarmable puesto = abm.traer(2L);
 

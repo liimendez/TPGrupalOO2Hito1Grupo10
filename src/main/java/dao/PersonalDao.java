@@ -1,6 +1,7 @@
 package dao;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -8,8 +9,18 @@ import org.hibernate.query.Query;
 import datos.Personal;
 
 public class PersonalDao {
-    private static Session session;
+    private Session session;
     private Transaction tx;
+    private static PersonalDao instancia = null;
+
+    protected PersonalDao() {}
+
+    public static PersonalDao getInstancia() {
+        if (instancia == null) {
+            instancia = new PersonalDao();
+        }
+        return instancia;
+    }
 
     private void iniciaOperacion() throws HibernateException {
         session = HibernateUtil.getSessionFactory().openSession();
@@ -32,19 +43,21 @@ public class PersonalDao {
         return obj;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Personal> traerTodas() {
-        List<Personal> lista = null;
+    public Set<Personal> traerTodas() {
+        Set<Personal> set = null;
         try {
             iniciaOperacion();
-      
             String hql = "select distinct p from Personal p left join fetch p.unidadAsignada order by p.id";
             Query<Personal> query = session.createQuery(hql, Personal.class);
-            lista = query.list();
+            set = new LinkedHashSet<>(query.getResultList());
         } finally {
             session.close();
         }
-        return lista;
+        return set;
+    }
+
+    public Set<Personal> traer() {
+        return traerTodas();
     }
 
     public long agregar(Personal objeto) {
@@ -87,17 +100,4 @@ public class PersonalDao {
             session.close();
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }

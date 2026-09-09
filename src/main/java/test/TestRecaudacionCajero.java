@@ -1,15 +1,20 @@
 package test;
+
+import datos.Cajero;
 import negocio.CajeroABM;
 
 public class TestRecaudacionCajero {
     public static void main(String[] args) {
-        CajeroABM abm = new CajeroABM();
-        for(long i=1; i<=40; i++) { 
-            try {
-                double total = abm.calcularRecaudacion(i);
-                if(total>0) System.out.println("Cajero ID "+i+" -> $"+total);
-            } catch(Exception e) {}
+        CajeroABM abm = CajeroABM.getInstancia();
+        
+        for (Cajero c : abm.traerTodos()) {
+            double recaudacion = abm.calcularRecaudacion(c.getId());
+            
+            System.out.println("Cajero: " + c.getNombre() + " " + c.getApellido() + 
+                               " | ID: " + c.getId() + 
+                               " | Turno: " + c.getTurno() + 
+                               " | Unidad: " + c.getUnidadAsignada().getNombreComercial() +
+                               " | Recaudación: $" + recaudacion);
         }
-        System.out.println("Recaudaciones actualizadas, refresca phpMyAdmin");
     }
 }

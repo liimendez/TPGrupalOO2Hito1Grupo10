@@ -1,18 +1,29 @@
 package negocio;
 
-import java.util.List;
+
+import java.util.Set;
+
 import dao.PersonalDao;
 import datos.Personal;
 
 public class PersonalABM {
-    private PersonalDao dao = new PersonalDao();
+    private static PersonalABM instancia = null;
+    private PersonalDao dao = PersonalDao.getInstancia();
 
+    protected PersonalABM() {}
+
+    public static PersonalABM getInstancia() {
+        if (instancia == null) {
+            instancia = new PersonalABM();
+        }
+        return instancia;
+    }
     public Personal traer(long id) {
         return dao.traer(id);
     }
 
     // lo uso para traer todas las personas que existan en la bd 
-    public List<Personal> traerTodas() {
+    public Set<Personal> traerTodas() {
         return dao.traerTodas();
     }
 

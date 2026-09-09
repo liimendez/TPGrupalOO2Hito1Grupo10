@@ -8,10 +8,11 @@ public class DetallePedido {
 	private Plato plato;
 	private double subtotal;
 
-	protected DetallePedido() {
+	public DetallePedido() {
 		// Constructor vacio requerido por Hibernate
 	}
 
+	// sobrecarga 
 	public DetallePedido(Pedido pedido, Plato plato, int cantidad) {
 
 	    this.pedido = pedido;
@@ -20,7 +21,13 @@ public class DetallePedido {
 	    this.subtotal = calcularSubtotal();
 
 	}
-
+	
+	public DetallePedido(Plato plato, int cantidad, Pedido pedido) {
+	    this.plato = plato;
+	    this.cantidad = cantidad;
+	    this.pedido = pedido;
+	}
+	
 	public double calcularSubtotal() {
 		return plato.getPrecioVenta() * cantidad;
 	}
@@ -58,7 +65,7 @@ public class DetallePedido {
 	}
 	
 	public double getSubtotal() {
-		return subtotal;
+	    return this.cantidad * this.plato.getPrecioVenta();
 	}
 
 	public void setSubtotal(double subtotal) {

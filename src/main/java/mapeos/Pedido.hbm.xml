@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!DOCTYPE hibernate-mapping PUBLIC
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "https://hibernate.org/dtd/hibernate-mapping-3.0.dtd">
@@ -17,14 +16,14 @@
                   type="java.time.LocalDate"
                   not-null="true"/>
 
-        <many-to-one name="festival"
-                     class="datos.Festival"
-                     column="festival_id"
-                     not-null="true"/>
-
         <many-to-one name="unidadVenta"
                      class="datos.UnidadVenta"
                      column="unidad_venta_id"
+                     not-null="true"/>
+
+        <many-to-one name="cajero"
+                     class="datos.Cajero"
+                     column="cajero_id"
                      not-null="true"/>
 
         <set name="detalles"
@@ -40,4 +39,3 @@
     </class>
 
 </hibernate-mapping>
-

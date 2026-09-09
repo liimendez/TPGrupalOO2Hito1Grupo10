@@ -4,13 +4,10 @@ import java.time.LocalDate;
 
 public class Cocinero extends Personal {
 
-	//private Long id;
 	private String especialidad;
-
 	private double plusCategoria;
 
 	public Cocinero() {
-		// Constructor vacio requerido por Hibernate
 	}
 
 	public Cocinero(String nombre, String apellido, String dni, LocalDate fechaDeNacimiento,
@@ -19,21 +16,40 @@ public class Cocinero extends Personal {
 		this.especialidad = especialidad;
 		this.plusCategoria = plusCategoria;
 	}
-	/*
-	public Long getId() {
-		return id;
+	
+	// NUEVO: metodo para calcular el plus de los cocineros... 
+	private double calcularPlusSegunEspecialidad() {
+		if (especialidad == null) return 0;
+		switch (especialidad.toLowerCase().trim()) {
+			case "parrilla":
+			case "parrillero":
+				return sueldoBase * 0.20;
+			case "sushi":
+			case "wok":
+				return sueldoBase * 0.25; 
+			case "pizzas":
+			case "pastas":
+				return sueldoBase * 0.15;
+			case "panaderia":
+			case "postres":
+			case "cocina fria":
+				return sueldoBase * 0.10;
+			case "fritura":
+				return sueldoBase * 0.05;
+			case "vegano":
+				return sueldoBase * 0.18;
+			default:
+				return sueldoBase * 0.10;
+		}
 	}
 
-	public void setId(Long id) {
-		this.id = id;
-	}
-*/
 	public String getEspecialidad() {
 		return especialidad;
 	}
 
 	public void setEspecialidad(String especialidad) {
 		this.especialidad = especialidad;
+		this.plusCategoria = calcularPlusSegunEspecialidad(); // se actualiza solo
 	}
 
 	public double getPlusCategoria() {
@@ -46,11 +62,15 @@ public class Cocinero extends Personal {
 
 	@Override
 	public double calcularSueldo() {
+	
+		if (plusCategoria == 0) {
+			plusCategoria = calcularPlusSegunEspecialidad();
+		}
 		return sueldoBase + plusCategoria;
 	}
 
 	@Override
 	public String toString() {
-	    return "cocinero: "+super.toString() + " [dni=" + dni + ", especialidad=" + especialidad + ", plusCategoria=" + plusCategoria + "]";
+	    return "cocinero: "+super.toString() + " [dni=" + dni + ", especialidad=" + especialidad + ", plusCategoria=" + plusCategoria + "] Sueldo Final: " + calcularSueldo();
 	}
 }

@@ -1,6 +1,8 @@
 package dao;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -12,6 +14,14 @@ public class PedidoDao {
 
     private Session session;
     private Transaction tx;
+    private static PedidoDao instancia = null;
+    
+    public static PedidoDao getInstancia() {
+        if (instancia == null) {
+            instancia = new PedidoDao();
+        }
+        return instancia;
+    }
 
     private void iniciaOperacion() throws HibernateException {
         session = HibernateUtil.getSessionFactory().openSession();
@@ -20,7 +30,7 @@ public class PedidoDao {
 
     private void manejaExcepcion(HibernateException he) throws HibernateException {
         tx.rollback();
-        throw new HibernateException("ERROR en la capa de acceso a datos", he);
+        throw new HibernateException("ERROR en la capa PedidoDao", he);
     }
 
     public Long agregar(Pedido pedido) {
@@ -44,8 +54,9 @@ public class PedidoDao {
             iniciaOperacion();
             pedido = session.get(Pedido.class, idPedido);
             if (pedido != null) {
-                Hibernate.initialize(pedido.getFestival());
                 Hibernate.initialize(pedido.getUnidadVenta());
+                Hibernate.initialize(pedido.getUnidadVenta().getFestival());
+                Hibernate.initialize(pedido.getCajero()); 
                 Hibernate.initialize(pedido.getDetalles());
                 pedido.getDetalles().forEach(d -> Hibernate.initialize(d.getPlato()));
             }
@@ -55,30 +66,85 @@ public class PedidoDao {
         return pedido;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Pedido> traerTodas() {
-        List<Pedido> lista = null;
+    public Set<Pedido> traerTodas() {
+        Set<Pedido> set = null;
         try {
             iniciaOperacion();
-            lista = session.createQuery("from Pedido p order by p.id", Pedido.class).list();
+            List<Pedido> lista = session.createQuery("from Pedido p order by p.id", Pedido.class).list();
+            set = new LinkedHashSet<>(lista);
         } finally {
             session.close();
         }
-        return lista;
+        return set;
     }
 
-    public List<Pedido> traerPorUnidadVenta(long idUnidadVenta) {
-        List<Pedido> lista = null;
+    public Set<Pedido> traerPorUnidadVenta(long idUnidadVenta) {
+        Set<Pedido> set = null;
         try {
             iniciaOperacion();
             String hql = "from Pedido p where p.unidadVenta.id = :idUnidad order by p.id";
             Query<Pedido> query = session.createQuery(hql, Pedido.class);
             query.setParameter("idUnidad", idUnidadVenta);
-            lista = query.list();
+            List<Pedido> lista = query.list();
+            set = new LinkedHashSet<>(lista);
         } finally {
             session.close();
         }
-        return lista;
+        return set;
+    }
+    public Set<Pedido> traerPorCajero(long idCajero) {
+        Set<Pedido> set = null;
+        try {
+            iniciaOperacion();
+            String hql = "SELECT DISTINCT p FROM Pedido p " +
+                         "LEFT JOIN FETCH p.detalles d " +
+                         "LEFT JOIN FETCH d.plato " +
+                         "JOIN FETCH p.cajero " +
+                         "WHERE p.cajero.id = :idCajero order by p.id";
+            Query<Pedido> query = session.createQuery(hql, Pedido.class);
+            query.setParameter("idCajero", idCajero);
+            set = new LinkedHashSet<>(query.list());
+            tx.commit();
+        } catch (HibernateException he) {
+            manejaExcepcion(he);
+        } finally {
+            session.close();
+        }
+        return set;
+    }
+    public Set<Pedido> traerPorCajeroConDetalles(long idCajero) {
+        try {
+            iniciaOperacion();
+            String hql = "SELECT DISTINCT p FROM Pedido p " +
+                         "LEFT JOIN FETCH p.detalles d " +
+                         "LEFT JOIN FETCH d.plato " +
+                         "JOIN FETCH p.cajero " +
+                         "WHERE p.cajero.id = :idCajero order by p.id";
+            Query<Pedido> query = session.createQuery(hql, Pedido.class);
+            query.setParameter("idCajero", idCajero);
+            Set<Pedido> set = new LinkedHashSet<>(query.list());
+            tx.commit();
+            return set;
+        } finally {
+            session.close();
+        }
+    }
+    
+    public Set<Pedido> traerPedidosOrdenadosParaCorte() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "SELECT DISTINCT p FROM Pedido p " +
+                         "JOIN FETCH p.unidadVenta uv " +
+                         "JOIN FETCH uv.festival f " +
+                         "JOIN FETCH p.cajero " +
+                         "LEFT JOIN FETCH p.detalles d " +
+                         "LEFT JOIN FETCH d.plato " +
+                         "ORDER BY f.id, uv.id";
+            List<Pedido> lista = session.createQuery(hql, Pedido.class).getResultList();
+            return new java.util.LinkedHashSet<>(lista);
+        } finally {
+            session.close();
+        }
     }
 
     public void actualizar(Pedido objeto) {

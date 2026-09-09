@@ -1,21 +1,33 @@
 package negocio;
 
-import java.util.List;
+import java.util.Set;
 import dao.UnidadVentaDao;
 import datos.Festival;
+import datos.FoodTruck;
 import datos.Personal;
+import datos.Plato;
+import datos.PuestoDesarmable;
 import datos.UnidadVenta;
 
 public class UnidadVentaABM {
 
-    private UnidadVentaDao dao = new UnidadVentaDao();
+	private static UnidadVentaABM instancia = null;
+    private UnidadVentaDao dao = UnidadVentaDao.getInstancia();
 
+    protected UnidadVentaABM() {}
+
+    public static UnidadVentaABM getInstancia() {
+        if (instancia == null) {
+            instancia = new UnidadVentaABM();
+        }
+        return instancia;
+    }
+    
     public UnidadVenta traer(long id) {
         return dao.traer(id);
     }
-
     
-    public List<UnidadVenta> traerTodas() {
+    public Set<UnidadVenta> traerTodas() {
         return dao.traerTodas();
     }
 
@@ -23,16 +35,11 @@ public class UnidadVentaABM {
         return dao.traerPorCodigoUnico(codigo);
     }
 
-    public List<UnidadVenta> traerPorFestival(Festival festival) {
+    public Set<UnidadVenta> traerPorFestival(Festival festival) {
         return dao.traerPorFestival(festival);
     }
 
     public long agregar(UnidadVenta unidad) {
-        // Validacion que ya tenes en la entidad
-        if (!UnidadVenta.validarCodigo(unidad.getCodigoUnico())) {
-            throw new IllegalArgumentException("El codigo unico debe tener exactamente 10 caracteres alfanumericos");
-        }
-        // Evitar duplicado
         if (dao.traerPorCodigoUnico(unidad.getCodigoUnico()) != null) {
             throw new IllegalArgumentException("Ya existe una unidad con codigo: " + unidad.getCodigoUnico());
         }
@@ -49,7 +56,12 @@ public class UnidadVentaABM {
     }
 
     // -----------------------------------------------------------------------------------------------------
-
+    // metodo para traer todos los platos de uv 
+    public Set<Plato> traerPlatosDeUnidadVentaLista(Long idUnidad) throws Exception {
+        if (idUnidad == null) throw new Exception("ID nulo");
+        return dao.traerPlatosPorUnidad(idUnidad);
+    }
+    //------------------------------------------------------------------------------------------------------------
     public void asignarResponsable(long idUnidad, Personal responsable) {
         UnidadVenta unidad = dao.traer(idUnidad);
         if (unidad == null) throw new IllegalArgumentException("Unidad no existe");
@@ -68,4 +80,54 @@ public class UnidadVentaABM {
         unidad.asignarStaff(empleado);
         dao.actualizar(unidad);
     }
+
+    // ---cU ---
+
+    public Set<UnidadVenta> traerPorFestivalOrdenadasPorSuperficie(long idFestival) throws Exception {
+        if (idFestival <= 0) throw new Exception("Id de festival invalido");
+        return dao.traerPorFestivalOrdenadasPorSuperficie(idFestival);
+    }
+
+    public Set<UnidadVenta> traerConMinimoPlatos(int minimo) throws Exception {
+        if (minimo < 0) throw new Exception("El minimo no puede ser negativo");
+        return dao.traerConMinimoPlatos(minimo);
+    }
+
+    public Set<UnidadVenta> traerOrdenadasPorFestival() throws Exception {
+        Set<UnidadVenta> lista = dao.traerOrdenadasPorFestival();
+        if (lista == null || lista.isEmpty()) throw new Exception("No hay unidades de venta registradas");
+        return lista;
+    }
+
+    public Set<UnidadVenta> traerOrdenadasPorMayorSuperficie() throws Exception {
+        Set<UnidadVenta> lista = dao.traerOrdenadasPorMayorSuperficie();
+        if (lista == null || lista.isEmpty()) throw new Exception("No hay unidades de venta registradas");
+        return lista;
+    }
+    
+ // --- CONSULTAS DE SANTI - REUTILIZANDO DAO ---
+
+    public Set<PuestoDesarmable> traerPuestosPorTiempoMontaje(Festival festival, int desde, int hasta) throws Exception {
+        if (festival == null) throw new Exception("Festival nulo");
+        if (desde > hasta) throw new Exception("Rango invalido");
+        return dao.traerPuestosPorTiempoMontaje(festival, desde, hasta);
+    }
+
+    public Set<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) throws Exception {
+        if (festival == null) throw new Exception("Festival nulo");
+        return dao.traerFoodTrucksConConexionElectrica(festival);
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
 }

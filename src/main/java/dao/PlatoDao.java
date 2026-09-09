@@ -1,6 +1,7 @@
 package dao;
 
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -8,9 +9,20 @@ import org.hibernate.query.Query;
 import datos.Plato;
 
 public class PlatoDao {
-    private static Session session;
+	
+    private Session session;
     private Transaction tx;
+    private static PlatoDao instancia = null;
 
+    protected PlatoDao() {}
+
+    public static PlatoDao getInstancia() {
+        if (instancia == null) {
+            instancia = new PlatoDao();
+        }
+        return instancia;
+    }
+    
     private void iniciaOperacion() throws HibernateException {
         session = HibernateUtil.getSessionFactory().openSession();
         tx = session.beginTransaction();
@@ -32,41 +44,43 @@ public class PlatoDao {
         return obj;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Plato> traerTodas() {
-        List<Plato> lista = null;
+    public Set<Plato> traerTodas() {
+        Set<Plato> set = null;
         try {
             iniciaOperacion();
             String hql = "from Plato p order by p.id";
             Query<Plato> query = session.createQuery(hql, Plato.class);
-            lista = query.list();
+            set = new LinkedHashSet<>(query.getResultList());
         } finally {
             session.close();
         }
-        return lista;
+        return set;
+    }
+
+    public Set<Plato> traer() {
+        return traerTodas();
     }
 
     // trae una lista de platos por unidad de venta 
-    @SuppressWarnings("unchecked")
-    public List<Plato> traerPorUnidadVenta(long idUnidadVenta) {
-        List<Plato> lista = null;
+    public Set<Plato> traerPorUnidadVenta(long idUnidadVenta) {
+        Set<Plato> set = null;
         try {
             iniciaOperacion();
             String hql = "from Plato p where p.unidadVenta.id = :idUnidad order by p.id";
             Query<Plato> query = session.createQuery(hql, Plato.class);
             query.setParameter("idUnidad", idUnidadVenta);
-            lista = query.list();
+            set = new LinkedHashSet<>(query.getResultList());
         } finally {
             session.close();
         }
-        return lista;
+        return set;
     }
 
-    public int agregar(Plato objeto) {
-        int id = 0;
+    public long agregar(Plato objeto) {
+        long id = 0;
         try {
             iniciaOperacion();
-            id = ((Long) session.save(objeto)).intValue();
+            id = (Long) session.save(objeto);
             tx.commit();
         } catch (HibernateException he) {
             manejaExcepcion(he);

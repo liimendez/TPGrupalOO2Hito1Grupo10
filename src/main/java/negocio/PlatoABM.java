@@ -1,27 +1,38 @@
 package negocio;
 
-import java.util.List;
+import java.util.Set;
 import dao.PlatoDao;
 import datos.Plato;
 import datos.UnidadVenta;
 
 public class PlatoABM {
 
-    private PlatoDao dao = new PlatoDao();
+    private static PlatoABM instancia = null;
+    private PlatoDao dao = PlatoDao.getInstancia();
+
+    protected PlatoABM() {}
+
+    public static PlatoABM getInstancia() {
+        if (instancia == null) {
+            instancia = new PlatoABM();
+        }
+        return instancia;
+    }
 
     // --- AGREGAR --- sin una unidad de venta 
-    public int agregar(String nombre, double precioVenta, double costoProduccion) {
+    public long agregar(String nombre, double precioVenta, double costoProduccion) {
         Plato plato = new Plato(nombre, precioVenta, costoProduccion);
         return dao.agregar(plato);
     }
-      // agregar con unidad de venta             
-    public int agregar(String nombre, double precioVenta, double costoProduccion, UnidadVenta unidadVenta) {
+
+    // agregar con unidad de venta             
+    public long agregar(String nombre, double precioVenta, double costoProduccion, UnidadVenta unidadVenta) {
         Plato plato = new Plato(nombre, precioVenta, costoProduccion);
         plato.setUnidadVenta(unidadVenta);
         return dao.agregar(plato);
     }
 
-    public int agregar(Plato plato) {
+    public long agregar(Plato plato) {
         return dao.agregar(plato);
     }
 
@@ -30,21 +41,23 @@ public class PlatoABM {
         return dao.traer(idPlato);
     }
 
-    public List<Plato> traerTodas() {
+    public Set<Plato> traerTodas() {
         return dao.traerTodas();
     }
 
-  
-    public List<Plato> traerPorUnidadVenta(long idUnidadVenta) {
+    public Set<Plato> traerTodos() {
+        return traerTodas();
+    }
+
+    public Set<Plato> traerPorUnidadVenta(long idUnidadVenta) {
         return dao.traerPorUnidadVenta(idUnidadVenta);
     }
 
-    // --- ACTUALIZAR ---
+  
     public void actualizar(Plato plato) {
         dao.actualizar(plato);
     }
 
-    // --- ELIMINAR --- por id o por objeto 
     public void eliminar(long id) {
         Plato p = dao.traer(id);
         if (p != null) {

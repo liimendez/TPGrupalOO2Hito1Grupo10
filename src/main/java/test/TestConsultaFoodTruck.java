@@ -10,9 +10,9 @@ public class TestConsultaFoodTruck {
 
     public static void main(String[] args) {
 
-        FoodTruckABM abm = new FoodTruckABM();
+        FoodTruckABM abm = FoodTruckABM.getInstancia();
 
-        FoodTruck foodTruck = abm.traer(1L); // fijarse si existe id 
+        FoodTruck foodTruck = abm.traer(21L); // fijarse si existe id 
 
         System.out.println(foodTruck);
     }

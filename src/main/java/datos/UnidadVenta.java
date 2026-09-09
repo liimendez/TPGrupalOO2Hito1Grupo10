@@ -1,7 +1,6 @@
 package datos;
 
-//import java.util.ArrayList;
-//import java.util.List;
+
 
 import java.util.HashSet;
 import java.util.Set;
@@ -32,23 +31,19 @@ public abstract class UnidadVenta {
 	    this.festival = festival;
 	    this.responsable = responsable;
 	}
-
-	/**
-	 * Logica de validacion propia del codigo unico: exactamente 10 caracteres
-	 * alfanumericos (letras y numeros, sin espacios ni simbolos).
-	 */
+// aca se valida que el codigo sea de 10 digitos y que sea alfanumerico 
 	public static boolean validarCodigo(String codigo) {
 		return codigo != null && codigo.matches("^[a-zA-Z0-9]{10}$");
 	}
-
+//aca se puede asignar algun empleado ya sea cajero o cocinero, pero el objeto tiene que estar creado... 
 	public void asignarStaff(Personal empleado) {
 		staff.add(empleado);
 		empleado.setUnidadAsignada(this);
 	}
-
+// aca se agrega el plato a la unidad de venta... 
 	public void agregarPlato(Plato plato) {
-		platosOfrecidos.add(plato);
-		plato.setUnidadVenta(this);
+		platosOfrecidos.add(plato); // lo agrego a la lista 
+		plato.setUnidadVenta(this); //y aca que es de tal unidad... 
 	}
 
 	public Long getId() {
@@ -108,16 +103,6 @@ public abstract class UnidadVenta {
 		this.id = id;
 	}
 
-   /*
-	public void setStaff(List<Personal> staff) {
-		this.staff = staff;
-	}
-
-
-	public void setPlatosOfrecidos(List<Plato> platosOfrecidos) {
-		this.platosOfrecidos = platosOfrecidos;
-	} */
-	
 	public Set<Personal> getStaff() {
 	    return staff;
 	}
@@ -130,14 +115,6 @@ public abstract class UnidadVenta {
 		this.responsable = responsable;
 	}
 	
-	/*
-	public List<Personal> getStaff() {
-		return staff;
-	}
-
-	public List<Plato> getPlatosOfrecidos() {
-		return platosOfrecidos;
-	} */
 	
 	public Set<Plato> getPlatosOfrecidos() {
 	    return platosOfrecidos;
@@ -149,6 +126,28 @@ public abstract class UnidadVenta {
 
 	@Override
 	public String toString() {
-		return "[nombreComercial=" + nombreComercial + ", codigoUnico=" + codigoUnico + "]";
+	    return "ID: " + id
+	            + " | Nombre: " + nombreComercial
+	            + " | Código: " + codigoUnico
+	            + " | Superficie: " + superficieM2 + " m²"
+	            + " | Festival: " + festival.getId();
+	}
+
+	public String mostrarDetalleConPlatos() {
+	    StringBuilder sb = new StringBuilder();
+	    sb.append("=== ").append(nombreComercial).append(" ===\n");
+	    sb.append("Codigo: ").append(codigoUnico).append("\n");
+	    sb.append("Superficie: ").append(superficieM2).append(" m2\n");
+	    sb.append("Festival: ").append(festival != null ? festival.getNombre() : "N/A").append("\n");
+
+	    try {
+	        sb.append("------ PLATOS (").append(platosOfrecidos.size()).append(") ------\n");
+	        for (Plato p : platosOfrecidos) {
+	            sb.append("  - ").append(p.getNombre()).append(" $").append(p.getPrecioVenta()).append("\n");
+	        }
+	    } catch (org.hibernate.LazyInitializationException e) {
+	        sb.append("------ PLATOS: No inicializados (usar fetch join) ------\n");
+	    }
+	    return sb.toString();
 	}
 }

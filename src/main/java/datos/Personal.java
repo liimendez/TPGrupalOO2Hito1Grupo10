@@ -109,7 +109,7 @@ public abstract class Personal {
 		return Period.between(fechaDeIngreso, LocalDate.now()).getYears();
 	}
 
-	public abstract double calcularSueldo();
+	public abstract double calcularSueldo(); // cada una de sus clases hijas lo calcula distinto 
 
 	@Override
 	public int hashCode() {

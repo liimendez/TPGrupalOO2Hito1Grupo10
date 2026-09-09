@@ -11,6 +11,5 @@
                 <param name="useNamed">true</param>
             </type>
         </property>
-        <property name="recaudacionTotal" column="recaudacion_total" type="double" not-null="true"/>
     </joined-subclass>
 </hibernate-mapping>

@@ -1,22 +1,48 @@
 package negocio;
 
 import java.time.LocalDate;
-import java.util.List;
-
+import java.util.HashSet;
+import java.util.Set;
 import dao.PedidoDao;
-import datos.Festival;
+import datos.Cajero;
+import datos.DetallePedido;
 import datos.Pedido;
+import datos.Plato;
 import datos.UnidadVenta;
 
 public class PedidoABM {
+   
+    private static PedidoABM instancia = null;
+    private PedidoDao dao = PedidoDao.getInstancia();
 
-    PedidoDao dao = new PedidoDao();
+    protected PedidoABM() {}
 
-    // con unidadVenta
-    public Long agregar(LocalDate fechaTransaccion, Festival festival, UnidadVenta unidadVenta) {
-        Pedido pedido = new Pedido(fechaTransaccion);
-        pedido.setFestival(festival);
-        pedido.setUnidadVenta(unidadVenta);
+    public static PedidoABM getInstancia() {
+        if (instancia == null) {
+            instancia = new PedidoABM();
+        }
+        return instancia;
+    }
+
+    public long agregar(LocalDate fecha, UnidadVenta uv, Cajero cajero, Plato plato, int cantidad) {
+        Pedido p = new Pedido();
+        p.setFechaTransaccion(fecha);
+        p.setUnidadVenta(uv);
+        p.setCajero(cajero);
+        p.setDetalles(new HashSet<>());
+        
+        DetallePedido d = new DetallePedido();
+        d.setPlato(plato);
+        d.setCantidad(cantidad);
+        d.setPedido(p);
+        
+        p.getDetalles().add(d);
+        
+        return dao.agregar(p);
+    }
+
+    // Agregar ya armado con detalles
+    public Long agregar(Pedido pedido) {
         return dao.agregar(pedido);
     }
 
@@ -24,16 +50,20 @@ public class PedidoABM {
         return dao.traer(idPedido);
     }
 
-    public Long agregar(Pedido pedido) {
-        return dao.agregar(pedido);
-    }
-    
-    public List<Pedido> traerTodas() {
+    public Set<Pedido> traerTodas() {
         return dao.traerTodas();
     }
 
-    public List<Pedido> traerPorUnidadVenta(long idUnidad) {
+    public Set<Pedido> traerPorUnidadVenta(long idUnidad) {
         return dao.traerPorUnidadVenta(idUnidad);
+    }
+
+    public Set<Pedido> traerPorCajero(long idCajero) {
+        return dao.traerPorCajero(idCajero);
+    }
+
+    public Set<Pedido> traerPedidosOrdenadosParaCorte() {
+        return dao.traerPedidosOrdenadosParaCorte();
     }
 
     public void actualizar(Pedido p) {
@@ -43,10 +73,4 @@ public class PedidoABM {
     public void eliminar(Pedido p) {
         dao.eliminar(p);
     }
-  
-
-  
-    
-    
-    
 }

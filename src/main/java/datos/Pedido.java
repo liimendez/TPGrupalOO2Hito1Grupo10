@@ -9,25 +9,33 @@ public class Pedido {
 
     private Long id;
     private LocalDate fechaTransaccion;
-    private Festival festival;
     private UnidadVenta unidadVenta;
 
+    private Cajero cajero; // sera el encargado de recaudar el dinero 
     private Set<DetallePedido> detalles = new HashSet<>();
 
     
-    protected Pedido() {
-        // Constructor vacio requerido por Hibernate
-    }
+    public Pedido() {}
 
-    public Pedido(LocalDate fechaTransaccion) {
-    	
+    public Pedido(LocalDate fechaTransaccion, UnidadVenta unidadVenta, Cajero cajero) {
         this.fechaTransaccion = fechaTransaccion;
+        this.unidadVenta = unidadVenta;
+        this.cajero = cajero;
     }
 
-    
     public void agregarDetalle(Plato plato, int cantidad) {
-        DetallePedido detalle = new DetallePedido(this, plato, cantidad);
-        detalles.add(detalle);
+        if (plato == null || cantidad <= 0) return;
+        
+        for (DetallePedido d : this.detalles) {
+            if (d.getPlato() != null && plato.getId() != null 
+                && d.getPlato().getId().equals(plato.getId())) {
+                d.setCantidad(d.getCantidad() + cantidad);
+                return;
+            }
+        }
+        
+        DetallePedido nuevo = new DetallePedido(plato, cantidad, this);
+        this.detalles.add(nuevo);
     }
 
     public double calcularTotal() {
@@ -35,46 +43,56 @@ public class Pedido {
                 .mapToDouble(d -> d.getPlato().getPrecioVenta() * d.getCantidad())
                 .sum();
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public LocalDate getFechaTransaccion() {
-        return fechaTransaccion;
-    }
-
-    public void setFechaTransaccion(LocalDate fechaTransaccion) {
-        this.fechaTransaccion = fechaTransaccion;
-    }
-
+    
+    // getter de festival calculado, no guardado
     public Festival getFestival() {
-        return festival;
+        return unidadVenta != null ? unidadVenta.getFestival() : null;
     }
 
-    public void setFestival(Festival festival) {
-        this.festival = festival;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public UnidadVenta getUnidadVenta() {
-        return unidadVenta;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setUnidadVenta(UnidadVenta unidadVenta) {
-        this.unidadVenta = unidadVenta;
-    }
+	public LocalDate getFechaTransaccion() {
+		return fechaTransaccion;
+	}
 
-    public Set<DetallePedido> getDetalles() {
-        return detalles;
-    }
+	public void setFechaTransaccion(LocalDate fechaTransaccion) {
+		this.fechaTransaccion = fechaTransaccion;
+	}
 
-    public void setDetalles(Set<DetallePedido> detalles) {
-        this.detalles = detalles;
-    }
+	public UnidadVenta getUnidadVenta() {
+		return unidadVenta;
+	}
 
-    @Override
-    public String toString() {
-        return "Pedido [fechaTransaccion=" + fechaTransaccion + ", total=" + calcularTotal() + "]";
-    }
+	public void setUnidadVenta(UnidadVenta unidadVenta) {
+		this.unidadVenta = unidadVenta;
+	}
+
+	public Set<DetallePedido> getDetalles() {
+		return detalles;
+	}
+
+	public Cajero getCajero() {
+		return cajero;
+	}
+
+	public void setCajero(Cajero cajero) {
+		this.cajero = cajero;
+	}
+
+	public void setDetalles(Set<DetallePedido> detalles) {
+		this.detalles = detalles;
+	}
+	
+	 @Override
+	    public String toString() {
+	        return "Pedido [id=" + id + ", fecha=" + fechaTransaccion + "]";
+	    }
+	
 }
 

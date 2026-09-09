@@ -5,7 +5,8 @@ import java.time.LocalDate;
 public class Cajero extends Personal {
 	
 	private Turno turno;
-	private double recaudacionTotal;
+	//private double recaudacionTotal; // no deberia ser un atributo de cajero ya que su recaudacion depende de la cantidad de pedidos que 
+	//tenga su unidad de venta a la cual fue asignado... 
 
 	public enum Turno {
 		MANIANA, NOCHE
@@ -18,8 +19,7 @@ public class Cajero extends Personal {
 	        LocalDate fechaDeIngreso, double sueldoBase, Turno turno, UnidadVenta unidadAsignada) {
 	    super(nombre, apellido, dni, fechaDeNacimiento, fechaDeIngreso, sueldoBase);
 	    this.turno = turno;
-	    this.unidadAsignada = unidadAsignada; // ESTO TE FALTABA
-	    this.recaudacionTotal = calcularRecaudacion();
+	    this.unidadAsignada = unidadAsignada;
 	}
 
 	public Turno getTurno() {
@@ -34,22 +34,11 @@ public class Cajero extends Personal {
 	public double calcularSueldo() {
 		return sueldoBase;
 	}
-	
-	public double calcularRecaudacion() {
 
-	    return this.recaudacionTotal;
-	}
-	public double getRecaudacionTotal() {
-		return recaudacionTotal;
-	}
-
-	public void setRecaudacionTotal(double recaudacionTotal) {
-		this.recaudacionTotal = recaudacionTotal;
-	}
-	
-	@Override
-	public String toString() {
-	    return "cajero : "+super.toString()+ " recaudacionTotal=" + recaudacionTotal
-	           + ", turno=" + turno + ", unidad=" + (unidadAsignada != null ? unidadAsignada.getId() : "SIN UNIDAD") + "]";
-	}
+    @Override
+    public String toString() {
+        return "cajero : "+super.toString()+ 
+               ", turno=" + turno + 
+               ", unidad=" + (unidadAsignada != null ? unidadAsignada.getId() : "SIN UNIDAD") + "]";
+    }
 }

@@ -63,10 +63,9 @@ public class Plato {
 	public void setUnidadVenta(UnidadVenta unidadVenta) {
 		this.unidadVenta = unidadVenta;
 	}
-
 	@Override
 	public String toString() {
-		return "Plato [nombre=" + nombre + ", precioVenta=" + precioVenta + ", costoProduccion=" + costoProduccion
-				+ "]";
+	    return String.format("%-30s | Venta: $%.2f | Costo: $%.2f", 
+	            nombre, precioVenta, costoProduccion);
 	}
 }
