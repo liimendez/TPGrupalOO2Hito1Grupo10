@@ -14,7 +14,7 @@ public class TestConsultaFestival {
             // =====================================================
             // 1. ORDENADAS POR FESTIVAL
             // =====================================================
-            System.out.println("\n========== UNIDADES ORDENADAS POR FESTIVAL ==========\n");
+       
             
             //  lo traigo ordenado desde el HQL: order by f.id 
             Set<UnidadVenta> ordenadasPorFestival = unidadVentaABM.traerOrdenadasPorFestival();
@@ -23,7 +23,7 @@ public class TestConsultaFestival {
                 System.out.println("No hay unidades de venta cargadas.");
                 return;
             }
-
+            System.out.println("\n========== UNIDADES ORDENADAS POR FESTIVAL ==========\n");
             for (UnidadVenta unidad : ordenadasPorFestival) {
                 System.out.println(
                         "Festival: " + unidad.getFestival().getId()

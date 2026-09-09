@@ -20,7 +20,7 @@ public class Festival {
 
     private Set<UnidadVenta> unidadesVenta = new HashSet<>();
 
-    private Set<Pedido> pedidos = new HashSet<>();
+   // private Set<Pedido> pedidos = new HashSet<>();
 
     // Constructor vacío requerido por Hibernate
     protected Festival() {
@@ -82,7 +82,7 @@ public class Festival {
     public void setUnidadesVenta(Set<UnidadVenta> unidadesVenta) {
         this.unidadesVenta = unidadesVenta;
     }
-
+/*
     public Set<Pedido> getPedidos() {
         return pedidos;
     }
@@ -90,7 +90,7 @@ public class Festival {
     public void setPedidos(Set<Pedido> pedidos) {
         this.pedidos = pedidos;
     }
-
+*/
     @Override
     public int hashCode() {
         return Objects.hash(id);
