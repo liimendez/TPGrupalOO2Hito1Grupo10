@@ -3,23 +3,26 @@ package dao;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.hibernate.Hibernate;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
+
 import datos.Pedido;
 
 public class PedidoDao {
 
     private Session session;
     private Transaction tx;
+
     private static PedidoDao instancia = null;
-    
+
     public static PedidoDao getInstancia() {
+
         if (instancia == null) {
             instancia = new PedidoDao();
         }
+
         return instancia;
     }
 
@@ -34,142 +37,292 @@ public class PedidoDao {
     }
 
     public Long agregar(Pedido pedido) {
+
         Long id = null;
+
         try {
             iniciaOperacion();
             session.persist(pedido);
             tx.commit();
             id = pedido.getId();
+
         } catch (HibernateException he) {
             manejaExcepcion(he);
+
         } finally {
             session.close();
         }
+
         return id;
     }
 
     public Pedido traer(long idPedido) {
+
         Pedido pedido = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         try {
-            iniciaOperacion();
-            pedido = session.get(Pedido.class, idPedido);
-            if (pedido != null) {
-                Hibernate.initialize(pedido.getUnidadVenta());
-                Hibernate.initialize(pedido.getUnidadVenta().getFestival());
-                Hibernate.initialize(pedido.getCajero()); 
-                Hibernate.initialize(pedido.getDetalles());
-                pedido.getDetalles().forEach(d -> Hibernate.initialize(d.getPlato()));
-            }
+            String hql = "from Pedido p inner join fetch p.unidadVenta uv " +
+                         "inner join fetch uv.festival " +
+                         "inner join fetch p.cajero " +
+                         "inner join fetch p.detalles d " +
+                         "inner join fetch d.plato " +
+                         "where p.id = :id";
+
+            pedido = session.createQuery(hql, Pedido.class)
+                            .setParameter("id", idPedido)
+                            .uniqueResult();
+
         } finally {
             session.close();
         }
+
         return pedido;
     }
 
     public Set<Pedido> traerTodas() {
-        Set<Pedido> set = null;
+
+        Set<Pedido> set;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         try {
-            iniciaOperacion();
-            List<Pedido> lista = session.createQuery("from Pedido p order by p.id", Pedido.class).list();
+            String hql = "from Pedido p order by p.id";
+            List<Pedido> lista = session.createQuery(hql, Pedido.class).list();
             set = new LinkedHashSet<>(lista);
+
         } finally {
             session.close();
         }
+
         return set;
     }
 
     public Set<Pedido> traerPorUnidadVenta(long idUnidadVenta) {
-        Set<Pedido> set = null;
-        try {
-            iniciaOperacion();
-            String hql = "from Pedido p where p.unidadVenta.id = :idUnidad order by p.id";
-            Query<Pedido> query = session.createQuery(hql, Pedido.class);
-            query.setParameter("idUnidad", idUnidadVenta);
-            List<Pedido> lista = query.list();
-            set = new LinkedHashSet<>(lista);
-        } finally {
-            session.close();
-        }
-        return set;
-    }
-    public Set<Pedido> traerPorCajero(long idCajero) {
-        Set<Pedido> set = null;
-        try {
-            iniciaOperacion();
-            String hql = "SELECT DISTINCT p FROM Pedido p " +
-                         "LEFT JOIN FETCH p.detalles d " +
-                         "LEFT JOIN FETCH d.plato " +
-                         "JOIN FETCH p.cajero " +
-                         "WHERE p.cajero.id = :idCajero order by p.id";
-            Query<Pedido> query = session.createQuery(hql, Pedido.class);
-            query.setParameter("idCajero", idCajero);
-            set = new LinkedHashSet<>(query.list());
-            tx.commit();
-        } catch (HibernateException he) {
-            manejaExcepcion(he);
-        } finally {
-            session.close();
-        }
-        return set;
-    }
-    public Set<Pedido> traerPorCajeroConDetalles(long idCajero) {
-        try {
-            iniciaOperacion();
-            String hql = "SELECT DISTINCT p FROM Pedido p " +
-                         "LEFT JOIN FETCH p.detalles d " +
-                         "LEFT JOIN FETCH d.plato " +
-                         "JOIN FETCH p.cajero " +
-                         "WHERE p.cajero.id = :idCajero order by p.id";
-            Query<Pedido> query = session.createQuery(hql, Pedido.class);
-            query.setParameter("idCajero", idCajero);
-            Set<Pedido> set = new LinkedHashSet<>(query.list());
-            tx.commit();
-            return set;
-        } finally {
-            session.close();
-        }
-    }
-    
-    public Set<Pedido> traerPedidosOrdenadosParaCorte() {
+
+        Set<Pedido> set;
         Session session = HibernateUtil.getSessionFactory().openSession();
+
         try {
-            String hql = "SELECT DISTINCT p FROM Pedido p " +
-                         "JOIN FETCH p.unidadVenta uv " +
-                         "JOIN FETCH uv.festival f " +
-                         "JOIN FETCH p.cajero " +
-                         "LEFT JOIN FETCH p.detalles d " +
-                         "LEFT JOIN FETCH d.plato " +
-                         "ORDER BY f.id, uv.id";
-            List<Pedido> lista = session.createQuery(hql, Pedido.class).getResultList();
-            return new java.util.LinkedHashSet<>(lista);
+            String hql = "from Pedido p inner join fetch p.unidadVenta uv where uv.id = :idUnidad order by p.id";
+
+            List<Pedido> lista = session.createQuery(hql, Pedido.class)
+                                       .setParameter("idUnidad", idUnidadVenta)
+                                       .list();
+
+            set = new LinkedHashSet<>(lista);
+
         } finally {
             session.close();
         }
+
+        return set;
     }
 
+    public Set<Pedido> traerPorCajero(long idCajero) {
+
+        Set<Pedido> set;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        try {
+            String hql = "select distinct p from Pedido p " +
+                         "inner join fetch p.cajero c " +
+                         "inner join fetch p.detalles d " +
+                         "inner join fetch d.plato " +
+                         "where c.id = :idCajero order by p.id";
+
+            List<Pedido> lista = session.createQuery(hql, Pedido.class)
+                                       .setParameter("idCajero", idCajero)
+                                       .list();
+
+            set = new LinkedHashSet<>(lista);
+
+        } finally {
+            session.close();
+        }
+
+        return set;
+    }
+
+    public Set<Pedido> traerPedidosOrdenadosParaCorte() {
+
+        Set<Pedido> set;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        try {
+            String hql = "select distinct p from Pedido p " +
+                         "inner join fetch p.unidadVenta uv " +
+                         "inner join fetch uv.festival f " +
+                         "inner join fetch p.cajero " +
+                         "inner join fetch p.detalles d " +
+                         "inner join fetch d.plato " +
+                         "order by f.id, uv.id";
+
+            List<Pedido> lista = session.createQuery(hql, Pedido.class).list();
+            set = new LinkedHashSet<>(lista);
+
+        } finally {
+            session.close();
+        }
+
+        return set;
+    }
+// actualizacion y baja 
     public void actualizar(Pedido objeto) {
+
         try {
             iniciaOperacion();
             session.update(objeto);
             tx.commit();
+
         } catch (HibernateException he) {
             manejaExcepcion(he);
             throw he;
+
         } finally {
             session.close();
         }
     }
 
     public void eliminar(Pedido objeto) {
+
         try {
             iniciaOperacion();
             session.delete(objeto);
             tx.commit();
+
         } catch (HibernateException he) {
             manejaExcepcion(he);
             throw he;
+
         } finally {
             session.close();
         }
     }
+    //--------------------------------------------------------------------------------------------------------
+    
+    
+    // =========================================================
+    // REPORTE EJECUTIVO -
+    // muchos pedidos se hacen en un festival : Pedido -> Festival 
+    // muchas unidades de venta pertenecen a un festival : UnidadVenta -> Festival 
+    // muchos pedidos los cobra un cajero : Pedido -> Cajero
+    // un pedido tiene muchos detalles : Pedido -> DetallePedido 
+    // muchos detalles apuntan a un plato : DetallePedido -> Plato 
+    // =========================================================
+
+    public datos.Festival traerFestivalQueMasRecaudo() {
+        datos.Festival festival = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "select uv.festival from Pedido ped " +
+                         "inner join ped.unidadVenta uv " +
+                         "inner join ped.detalles det inner join det.plato pla " +
+                         "group by uv.festival.id order by sum(det.cantidad * pla.precioVenta) desc";
+            festival = session.createQuery(hql, datos.Festival.class).setMaxResults(1).uniqueResult();
+        } finally {
+            session.close();
+        }
+        return festival;
+    }
+
+    public double calcularRecaudacionPorFestival(long idFestival) {
+        Double total = 0.0;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "select sum(det.cantidad * pla.precioVenta) from Pedido ped " +
+                         "inner join ped.unidadVenta uv inner join ped.detalles det inner join det.plato pla " +
+                         "where uv.festival.id = :idFestival";
+            total = session.createQuery(hql, Double.class).setParameter("idFestival", idFestival).uniqueResult();
+        } finally {
+            session.close();
+        }
+        return total != null ? total : 0;
+    }
+
+    public Object[] traerUnidadQueMasRecaudoEnFestival(long idFestival) {
+        Object[] data = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "select ped.unidadVenta, sum(det.cantidad * pla.precioVenta) from Pedido ped " +
+                         "inner join ped.unidadVenta uv inner join ped.detalles det inner join det.plato pla " +
+                         "where uv.festival.id = :idFestival " +
+                         "group by ped.unidadVenta.id order by sum(det.cantidad * pla.precioVenta) desc";
+            data = session.createQuery(hql, Object[].class).setParameter("idFestival", idFestival).setMaxResults(1).uniqueResult();
+        } finally {
+            session.close();
+        }
+        return data;
+    }
+
+    public double calcularRecaudacionUnidadEnFestival(long idFestival, long idUnidad) {
+        Double total = 0.0;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "select sum(det.cantidad * pla.precioVenta) from Pedido ped " +
+                         "inner join ped.unidadVenta uv inner join ped.detalles det inner join det.plato pla " +
+                         "where uv.festival.id = :idFestival and ped.unidadVenta.id = :idUnidad";
+            total = session.createQuery(hql, Double.class).setParameter("idFestival", idFestival).setParameter("idUnidad", idUnidad).uniqueResult();
+        } finally {
+            session.close();
+        }
+        return total != null ? total : 0;
+    }
+
+    public datos.Plato traerPlatoMasVendidoEnFestival(long idFestival) {
+        datos.Plato plato = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "select det.plato from Pedido ped inner join ped.unidadVenta uv inner join ped.detalles det " +
+                         "where uv.festival.id = :idFestival " +
+                         "group by det.plato.id order by sum(det.cantidad) desc";
+            plato = session.createQuery(hql, datos.Plato.class).setParameter("idFestival", idFestival).setMaxResults(1).uniqueResult();
+        } finally {
+            session.close();
+        }
+        return plato;
+    }
+
+    public datos.Plato traerPlatoMasRentableEnFestival(long idFestival) {
+        datos.Plato plato = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "select det.plato from Pedido ped inner join ped.unidadVenta uv inner join ped.detalles det inner join det.plato pla " +
+                         "where uv.festival.id = :idFestival " +
+                         "group by det.plato.id order by sum(det.cantidad * pla.precioVenta) desc";
+            plato = session.createQuery(hql, datos.Plato.class).setParameter("idFestival", idFestival).setMaxResults(1).uniqueResult();
+        } finally {
+            session.close();
+        }
+        return plato;
+    }
+
+    public datos.Cajero traerCajeroQueMasRecaudoEnFestival(long idFestival) {
+        datos.Cajero cajero = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "select ped.cajero from Pedido ped inner join ped.unidadVenta uv inner join ped.detalles det inner join det.plato pla " +
+                         "where uv.festival.id = :idFestival " +
+                         "group by ped.cajero.id order by sum(det.cantidad * pla.precioVenta) desc";
+            cajero = session.createQuery(hql, datos.Cajero.class).setParameter("idFestival", idFestival).setMaxResults(1).uniqueResult();
+        } finally {
+            session.close();
+        }
+        return cajero;
+    }
+
+    public double calcularRecaudacionPorCajeroEnFestival(long idCajero, long idFestival) {
+        Double total = 0.0;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "select sum(det.cantidad * pla.precioVenta) from Pedido ped " +
+                         "inner join ped.unidadVenta uv inner join ped.detalles det inner join det.plato pla " +
+                         "where ped.cajero.id = :idCajero and uv.festival.id = :idFestival";
+            total = session.createQuery(hql, Double.class).setParameter("idCajero", idCajero).setParameter("idFestival", idFestival).uniqueResult();
+        } finally {
+            session.close();
+        }
+        return total != null ? total : 0;
+    }
+    
+
 }
