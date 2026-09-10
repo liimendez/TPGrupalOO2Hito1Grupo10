@@ -1,6 +1,7 @@
 package negocio;
 
 import java.util.Set;
+import java.util.List;
 import dao.UnidadVentaDao;
 import datos.Festival;
 import datos.FoodTruck;
@@ -105,18 +106,15 @@ public class UnidadVentaABM {
         return lista;
     }
     
- // --- CONSULTAS DE SANTI - REUTILIZANDO DAO ---
+	// CONSULTA 1
+	public List<PuestoDesarmable> traerPuestosPorTiempoMontaje(Festival festival, int desde, int hasta) {
+		return dao.traerPuestosPorTiempoMontaje(festival, desde, hasta);
+	}
 
-    public Set<PuestoDesarmable> traerPuestosPorTiempoMontaje(Festival festival, int desde, int hasta) throws Exception {
-        if (festival == null) throw new Exception("Festival nulo");
-        if (desde > hasta) throw new Exception("Rango invalido");
-        return dao.traerPuestosPorTiempoMontaje(festival, desde, hasta);
-    }
-
-    public Set<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) throws Exception {
-        if (festival == null) throw new Exception("Festival nulo");
-        return dao.traerFoodTrucksConConexionElectrica(festival);
-    }
+	// CONSULTA 2
+	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) {
+		return dao.traerFoodTrucksConConexionElectrica(festival);
+	}
     
     
     

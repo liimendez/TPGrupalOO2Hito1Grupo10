@@ -185,35 +185,71 @@ public class UnidadVentaDao {
         }
     }
     
-    // consultas de santi 
- // CONSULTA 1: PuestoDesarmable por tiempo de montaje
-    public Set<PuestoDesarmable> traerPuestosPorTiempoMontaje(Festival festival, int desde, int hasta) {
-        Set<PuestoDesarmable> set = null;
-        try {
-            iniciaOperacion();
-            String hql = "FROM PuestoDesarmable p WHERE p.festival.id = :idFestival AND p.tiempoMontajeMin BETWEEN :desde AND :hasta";
-            Query<PuestoDesarmable> query = session.createQuery(hql, PuestoDesarmable.class);
-            query.setParameter("idFestival", festival.getId());
-            query.setParameter("desde", desde);
-            query.setParameter("hasta", hasta);
-            set = new LinkedHashSet<>(query.getResultList());
-        } finally {
-            session.close();
-        }
-        return set;
-    }
+	// CONSULTA 1: Trae todos los PuestoDesarmable de un Festival que su tiempo de montaje(tiempoMontajeMin) este en un rango indicado.
+	// Se recibe el objeto Festival y se utiliza INNER JOIN para relacionar la UnidadVenta con el Festival.
+	public List<PuestoDesarmable> traerPuestosPorTiempoMontaje(Festival festival, int desde, int hasta) {
 
-    // CONSULTA 2: FoodTruck con conexion electrica
-    public Set<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) {
-        Set<FoodTruck> set = null;
-        try {
-            iniciaOperacion();
-            String hql = "FROM FoodTruck ft WHERE ft.festival.id = :idFestival AND ft.requiereConexionElectrica = true";
-            Query<FoodTruck> query = session.createQuery(hql, FoodTruck.class);
-            query.setParameter("idFestival", festival.getId());
-            set = new LinkedHashSet<>(query.getResultList());
-        } finally {
-            session.close();
-        }
-        return set;
-    }}
+		List<PuestoDesarmable> lista = null;
+
+		try {
+			iniciaOperacion();
+
+			// OPCION 1: Se recibe el objeto Festival, luego se utiliza INNER JOIN para relacionarlo y por ultimo lo compara directamente en el WHERE
+			// String hql = "FROM PuestoDesarmable p " + "INNER JOIN p.festival f " + "WHERE f = :festival " + "AND p.tiempoMontajeMin BETWEEN :desde AND :hasta";
+
+			// OPCION 2: Se utiliza el ID del Festival para realizar el filtro
+			   String hql = "FROM PuestoDesarmable p " + "INNER JOIN p.festival f " + "WHERE f.id = :idFestival " + "AND p.tiempoMontajeMin BETWEEN :desde AND :hasta";
+
+			Query<PuestoDesarmable> query = session.createQuery(hql, PuestoDesarmable.class);
+
+			// OPCION 1:
+			// query.setParameter("festival", festival);
+
+			// OPCION 2:
+			query.setParameter("idFestival", festival.getId());
+
+			query.setParameter("desde", desde);
+			query.setParameter("hasta", hasta);
+
+			lista = query.getResultList();
+
+		} finally {
+			session.close();
+		}
+
+		return lista;
+	}
+
+	// CONSULTA 2: Trae todos los FoodTruck de un Festival que requieren conexión eléctrica(requiereConexionElectrica) 
+	// Se recibe el objeto Festival y se utiliza INNER JOIN para relacionar la UnidadVenta con el Festival.
+	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) {
+
+		List<FoodTruck> lista = null;
+
+		try {
+			iniciaOperacion();
+
+			// OPCION 1: Se recibe el objeto Festival, luego se utiliza INNER JOIN para relacionarlo y por ultimo lo compara directamente en el WHERE
+			// String hql = "FROM FoodTruck f " + "INNER JOIN f.festival festival " + "WHERE festival = :festival " + "AND f.requiereConexionElectrica = true";
+
+			// OPCION 2: Se utiliza el ID del Festival para realizar el filtro
+			String hql = "FROM FoodTruck f " + "INNER JOIN f.festival festival " + "WHERE festival.id = :idFestival " + "AND f.requiereConexionElectrica = true";
+
+			Query<FoodTruck> query = session.createQuery(hql, FoodTruck.class);
+
+			// OPCION 1:
+			// query.setParameter("festival", festival);
+
+			// OPCION 2:
+			query.setParameter("idFestival", festival.getId());
+
+			lista = query.getResultList();
+
+		} finally {
+			session.close();
+		}
+
+		return lista;
+	}
+
+}
