@@ -1,18 +1,15 @@
 package negocio;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import dao.CajeroDao;
-import dao.PedidoDao;
 import datos.Cajero;
-import datos.Pedido;
 
 public class CajeroABM {
 
     private static CajeroABM instancia = null;
     private CajeroDao dao = CajeroDao.getInstancia();
-    private PedidoDao pedidoDao = PedidoDao.getInstancia();
 
     protected CajeroABM() {}
 
@@ -23,81 +20,72 @@ public class CajeroABM {
         return instancia;
     }
 
-    public Cajero traer(long id) {
-        return dao.traer(id);
+    public Cajero traer(long id) throws Exception {
+        Cajero c = dao.traer(id);
+        if (c == null) throw new Exception("No existe cajero con id: " + id);
+        return c;
     }
 
-  
+ // ordenado por id
     public Set<Cajero> traerTodas() {
         return dao.traerTodos();
     }
 
-    public Set<Cajero> traerTodos() {
-        return dao.traerTodos();
+
+    public Set<Cajero> traerCajerosOrdenados() {
+        return dao.traerCajerosOrdenados();
     }
 
-    public long agregar(Cajero c) {
+    public long agregar(Cajero c) throws Exception {
+        if (c.getNombre() == null || c.getApellido() == null) throw new Exception("Nombre y apellido obligatorios");
+        if (c.getUnidadAsignada() == null) throw new Exception("Cajero debe tener unidad asignada");
         return dao.agregar(c);
     }
 
-    public void actualizar(Cajero c) {
+    public void actualizar(Cajero c) throws Exception {
+        if (c == null) throw new Exception("Cajero nulo");
         dao.actualizar(c);
     }
 
-    public void eliminar(long id) {
+    public void eliminar(long id) throws Exception {
         Cajero c = dao.traer(id);
-        if (c != null) {
-            dao.eliminar(c);
-        }
+        if (c == null) throw new Exception("No existe cajero para eliminar");
+        dao.eliminar(c);
     }
 
-    public double calcularRecaudacion(long cajeroId) {
-      
-        Set<Pedido> pedidos = pedidoDao.traerPorCajeroConDetalles(cajeroId);
-        return pedidos.stream().mapToDouble(Pedido::calcularTotal).sum();
+   
+    public double calcularRecaudacion(long cajeroId) throws Exception {
+        if (cajeroId <= 0) throw new Exception("Id cajero invalido");
+        return dao.calcularRecaudacionPorCajero(cajeroId);
+    }
+
+    public double calcularRecaudacionPorFecha(long cajeroId, LocalDate fecha) throws Exception {
+        if (fecha == null) throw new Exception("Fecha nula");
+        if (fecha.isAfter(LocalDate.now())) throw new Exception("Fecha futura no valida");
+        return dao.calcularRecaudacionPorCajeroPorFecha(cajeroId, fecha);
     }
    
- 
     public Cajero traerCajeroQueMasRecaudo() {
-        Set<Pedido> setPedidos = pedidoDao.traerPedidosOrdenadosParaCorte();
-        if (setPedidos == null || setPedidos.isEmpty()) return null;
-        
-        List<Pedido> lista = new ArrayList<>(setPedidos);
+        Set<Cajero> cajeros = dao.traerTodos();
+        if (cajeros == null || cajeros.isEmpty()) return null;
 
-        if (lista.isEmpty()) return null;
-
-        int i = 0;
+        Cajero maxCajero = null;
         double maxRecaudacion = -1;
-        Long idUnidadMax = -1L;
 
-        while (i < lista.size()) {
-            Long idFestivalActual = lista.get(i).getUnidadVenta().getFestival().getId();
-
-            while (i < lista.size() && lista.get(i).getUnidadVenta().getFestival().getId().equals(idFestivalActual)) {
-                Long idUnidadActual = lista.get(i).getUnidadVenta().getId();
-                double totalUnidad = 0;
-
-                while (i < lista.size() 
-                        && lista.get(i).getUnidadVenta().getFestival().getId().equals(idFestivalActual)
-                        && lista.get(i).getUnidadVenta().getId().equals(idUnidadActual)) {
-                    
-                    totalUnidad += lista.get(i).calcularTotal();
-                    i++;
-                }
-
-                if (totalUnidad > maxRecaudacion) {
-                    maxRecaudacion = totalUnidad;
-                    idUnidadMax = idUnidadActual;
-                }
-            }
-        }
-
-        Set<Cajero> cajeros = this.traerTodos();
         for (Cajero c : cajeros) {
-            if (c.getUnidadAsignada() != null && c.getUnidadAsignada().getId().equals(idUnidadMax)) {
-                return c;
+            double rec = dao.calcularRecaudacionPorCajero(c.getId());
+            if (rec > maxRecaudacion) {
+                maxRecaudacion = rec;
+                maxCajero = c;
             }
         }
-        return null;
+        return maxCajero;
+    }
+
+    public Cajero traerCajeroQueMasRecaudoPorFecha(LocalDate fecha) throws Exception {
+        if (fecha == null) throw new Exception("Fecha nula");
+        List<Cajero> lista = dao.traerCajeroQueMasRecaudoPorFecha(fecha);
+        if (lista.isEmpty()) throw new Exception("No hubo ventas en fecha: " + fecha);
+        return lista.get(0);
     }
 }

@@ -1,25 +1,30 @@
 package dao;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
+
 import datos.PuestoDesarmable;
 
 public class PuestoDesarmableDao {
 
     private Session session;
     private Transaction tx;
+
     private static PuestoDesarmableDao instancia = null;
 
     protected PuestoDesarmableDao() {}
 
     public static PuestoDesarmableDao getInstancia() {
+
         if (instancia == null) {
             instancia = new PuestoDesarmableDao();
         }
+
         return instancia;
     }
 
@@ -34,70 +39,91 @@ public class PuestoDesarmableDao {
     }
 
     public long agregar(PuestoDesarmable puesto) {
+
         long id = 0;
+
         try {
             iniciaOperacion();
             id = (Long) session.save(puesto);
             tx.commit();
+
         } catch (HibernateException he) {
             manejaExcepcion(he);
             throw he;
+
         } finally {
             session.close();
         }
+
         return id;
     }
 
     public PuestoDesarmable traer(long idPuesto) {
+
         PuestoDesarmable puesto = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         try {
-            iniciaOperacion();
-            puesto = session.get(PuestoDesarmable.class, idPuesto);
+            String hql = "from PuestoDesarmable p inner join fetch p.festival where p.id = :id";
+            puesto = session.createQuery(hql, PuestoDesarmable.class)
+                            .setParameter("id", idPuesto)
+                            .uniqueResult();
+
         } finally {
             session.close();
         }
+
         return puesto;
     }
 
+    // Va en Set por el inner join fetch
     public Set<PuestoDesarmable> traerTodas() {
-        Set<PuestoDesarmable> set = null;
+
+        Set<PuestoDesarmable> set;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         try {
-            iniciaOperacion();
-            Query<PuestoDesarmable> query = session.createQuery("from PuestoDesarmable p order by p.id", PuestoDesarmable.class);
-            set = new LinkedHashSet<>(query.getResultList());
+            String hql = "from PuestoDesarmable p inner join fetch p.festival order by p.id";
+            List<PuestoDesarmable> lista = session.createQuery(hql, PuestoDesarmable.class).list();
+            set = new LinkedHashSet<>(lista);
+
         } finally {
             session.close();
         }
+
         return set;
     }
 
-    public Set<PuestoDesarmable> traer() {
-        return traerTodas();
-    }
-
     public void actualizar(PuestoDesarmable objeto) {
+
         try {
             iniciaOperacion();
             session.update(objeto);
             tx.commit();
+
         } catch (HibernateException he) {
             manejaExcepcion(he);
             throw he;
+
         } finally {
             session.close();
         }
     }
 
     public void eliminar(PuestoDesarmable objeto) {
+
         try {
             iniciaOperacion();
             session.delete(objeto);
             tx.commit();
+
         } catch (HibernateException he) {
             manejaExcepcion(he);
             throw he;
+
         } finally {
             session.close();
         }
     }
+
 }

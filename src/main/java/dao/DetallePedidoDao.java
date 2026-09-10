@@ -1,17 +1,19 @@
 package dao;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
+import org.hibernate.HibernateException;
+
 import datos.DetallePedido;
 
 public class DetallePedidoDao {
 
     private Session session;
     private Transaction tx;
+
     private static DetallePedidoDao instancia = null;
 
     protected DetallePedidoDao() {}
@@ -35,69 +37,90 @@ public class DetallePedidoDao {
 
     public Long agregar(DetallePedido detallePedido) {
         Long id = null;
+
         try {
             iniciaOperacion();
             id = (Long) session.save(detallePedido);
             tx.commit();
+
         } catch (HibernateException he) {
             manejaExcepcion(he);
             throw he;
+
         } finally {
             session.close();
         }
+
         return id;
     }
 
     public DetallePedido traer(long id) {
+
         DetallePedido detallePedido = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         try {
-            iniciaOperacion();
-            detallePedido = session.get(DetallePedido.class, id);
+            // con fetch para no hacer N+1 cuando se llame a detalle.getPlato()
+            String hql = "from DetallePedido d inner join fetch d.plato where d.id = :id";
+            detallePedido = session.createQuery(hql, DetallePedido.class)
+                                   .setParameter("id", id)
+                                   .uniqueResult();
+
         } finally {
             session.close();
         }
+
         return detallePedido;
     }
 
+    // utiliza lista del tipo set por el inner join fetch
     public Set<DetallePedido> traerTodas() {
-        Set<DetallePedido> set = null;
+
+        Set<DetallePedido> set;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
         try {
-            iniciaOperacion();
-            Query<DetallePedido> query = session.createQuery("from DetallePedido d order by d.id", DetallePedido.class);
-            set = new LinkedHashSet<>(query.getResultList());
+            String hql = "from DetallePedido d inner join fetch d.plato p inner join fetch d.pedido order by d.id";
+            List<DetallePedido> lista = session.createQuery(hql, DetallePedido.class).list();
+            set = new LinkedHashSet<>(lista);
+
         } finally {
             session.close();
         }
+
         return set;
     }
 
-    public Set<DetallePedido> traer() {
-        return traerTodas();
-    }
-
     public void actualizar(DetallePedido objeto) {
+
         try {
             iniciaOperacion();
             session.update(objeto);
             tx.commit();
+
         } catch (HibernateException he) {
             manejaExcepcion(he);
             throw he;
+
         } finally {
             session.close();
         }
     }
 
     public void eliminar(DetallePedido objeto) {
+
         try {
             iniciaOperacion();
             session.delete(objeto);
             tx.commit();
+
         } catch (HibernateException he) {
             manejaExcepcion(he);
             throw he;
+
         } finally {
             session.close();
         }
     }
+
 }

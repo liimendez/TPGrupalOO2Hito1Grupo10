@@ -1,4 +1,4 @@
-package test;
+package test; 
 
 import datos.Cajero;
 import negocio.CajeroABM;
@@ -7,12 +7,7 @@ public class TestTraerCajeroMasRecaudado {
     public static void main(String[] args) {
         CajeroABM abm = CajeroABM.getInstancia();    
         
-        
-        //CU 1: BUSCO EL CAJERO QUE MAS RECAUDO Y LO MUESTRO... 
-        //TRAIGO TODOS LOS CAJEROS POR CADA CAJERO SUS PEDIDOS 
-        //SE CALCULA LA RECAUDACION Y COMPARO HASTA QUEDAR CON EL MAX QUE RECAUDO 
         try {
-          // creo un objeto del tipo cajero y luego llamo al metodo q esta en su respectivo abm 
             Cajero max = abm.traerCajeroQueMasRecaudo();
             
             if (max != null) {
@@ -31,8 +26,24 @@ public class TestTraerCajeroMasRecaudado {
  
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            dao.HibernateUtil.getSessionFactory().close();
         }
+        
+        System.out.println("========== RANKING PARA VERIFICAR ==========");
+        for (Cajero c : abm.traerTodas()) {
+            try {
+				System.out.println(c.getNombre() + " " + c.getApellido() + " ID:" + c.getId() + " -> $" + abm.calcularRecaudacion(c.getId()));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        System.out.println("============================================");
+        
+        
+        
+        
+        
+        
+        
     }
 }

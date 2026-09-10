@@ -1,6 +1,7 @@
 package negocio;
 
 import java.util.Set;
+
 import dao.DetallePedidoDao;
 import datos.DetallePedido;
 import datos.Pedido;
@@ -14,42 +15,96 @@ public class DetallePedidoABM {
     protected DetallePedidoABM() {}
 
     public static DetallePedidoABM getInstancia() {
+
         if (instancia == null) {
             instancia = new DetallePedidoABM();
         }
+
         return instancia;
     }
 
-    public Long agregar(Pedido pedido, Plato plato, int cantidad) {
+    // --------------------------------------------------
+    // ALTA
+    // --------------------------------------------------
+
+    public Long agregar(Pedido pedido, Plato plato, int cantidad) throws Exception {
+
+        if (pedido == null) {
+            throw new Exception("Pedido nulo");
+        }
+
+        if (plato == null) {
+            throw new Exception("Plato nulo");
+        }
+
+        if (cantidad <= 0) {
+            throw new Exception("Cantidad debe ser > 0");
+        }
+
         DetallePedido detallePedido = new DetallePedido(pedido, plato, cantidad);
+
         return dao.agregar(detallePedido);
     }
 
-    // Sobrecarga
-    public Long agregar(DetallePedido detallePedido) {
+    public Long agregar(DetallePedido detallePedido) throws Exception {
+
+        if (detallePedido == null) {
+            throw new Exception("Detalle nulo");
+        }
+
+        if (detallePedido.getCantidad() <= 0) {
+            throw new Exception("Cantidad debe ser > 0");
+        }
+
         return dao.agregar(detallePedido);
     }
 
-    public DetallePedido traer(long id) {
-        return dao.traer(id);
+    // --------------------------------------------------
+    // TRAER
+    // --------------------------------------------------
+
+    public DetallePedido traer(long id) throws Exception {
+
+        if (id <= 0) {
+            throw new Exception("Id invalido");
+        }
+
+        DetallePedido d = dao.traer(id);
+
+        if (d == null) {
+            throw new Exception("No existe DetallePedido con id: " + id);
+        }
+
+        return d;
     }
+
 
     public Set<DetallePedido> traerTodas() {
         return dao.traerTodas();
     }
 
-    public Set<DetallePedido> traerTodos() {
-        return traerTodas();
-    }
+    // --------------------------------------------------
+    // MODIFICACION Y BAJA
+    // --------------------------------------------------
 
-    public void actualizar(DetallePedido d) {
+    public void actualizar(DetallePedido d) throws Exception {
+
+        if (d == null) {
+            throw new Exception("Detalle nulo para actualizar");
+        }
+
         dao.actualizar(d);
     }
 
-    public void eliminar(long id) {
+    public void eliminar(long id) throws Exception {
+
         DetallePedido d = dao.traer(id);
-        if (d != null) {
-            dao.eliminar(d);
+
+        if (d == null) {
+            throw new Exception("No existe DetallePedido con id: " + id + " para eliminar");
         }
+
+        dao.eliminar(d);
     }
+
 }
