@@ -1,6 +1,6 @@
 package dao;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,8 +11,7 @@ import org.hibernate.query.Query;
 import datos.Cajero;
 
 public class CajeroDao {
-	
-	
+    
     private Session session;
     private Transaction tx;
     private static CajeroDao instancia = null;
@@ -64,11 +63,11 @@ public class CajeroDao {
         return c;
     }
 
-
     public Set<Cajero> traerTodos() {
         Set<Cajero> set = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
+       
             String hql = "from Cajero c inner join fetch c.unidadAsignada uv inner join fetch uv.festival order by c.id";
             List<Cajero> lista = session.createQuery(hql, Cajero.class).list();
             set = new LinkedHashSet<>(lista);
@@ -77,8 +76,7 @@ public class CajeroDao {
         }
         return set;
     }
-
-
+   // trae solo cajeros ordenado por apellido
     public Set<Cajero> traerCajerosOrdenados() {
         Set<Cajero> set = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -118,27 +116,96 @@ public class CajeroDao {
         }
     }
 
-    // la recaudacion se calcula a partir de la suma de los subtotales de los detalles pedidos de una unidad de venta.
-    public double calcularRecaudacionPorCajero(long idCajero) {
-        double total = 0;
-        try {
-            iniciaOperacion();
-            // 1. Busco en que unidad esta el cajero
-            String hqlUnidad = "select c.unidadAsignada.id from Cajero c where c.id = :idCajero";
-            Query<Long> qUnidad = session.createQuery(hqlUnidad, Long.class);
-            qUnidad.setParameter("idCajero", idCajero);
-            Long idUnidad = qUnidad.uniqueResult();
 
-            if (idUnidad != null) {
-                // 2. Sumo todos los detalles de los pedidos de esa unidad
-                String hqlSuma = "select coalesce(sum(d.subtotal), 0) from DetallePedido d where d.pedido.unidadVenta.id = :idUnidad";
-                Query<Double> qSuma = session.createQuery(hqlSuma, Double.class);
-                qSuma.setParameter("idUnidad", idUnidad);
-                total = qSuma.uniqueResult();
+    // la recaudacion se calcula a partir de la suma de los subtotales de los detalles pedidos de una unidad de venta. global 
+    public double calcularRecaudacionPorCajero(long idCajero) {
+
+        double recaudacion = 0;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        try {
+            // DetallePedido ya tiene el subtotal calculado
+            String hql = "select coalesce(sum(d.subtotal), 0) " +
+                         "from Pedido p " +
+                         "inner join p.cajero c " +
+                         "inner join p.detalles d " +
+                         "where c.id = :idCajero";
+
+            Double result = session.createQuery(hql, Double.class)
+                                  .setParameter("idCajero", idCajero)
+                                  .uniqueResult();
+
+            if (result != null) {
+                recaudacion = result;
             }
+
+        } finally {
+            session.close();
+        }
+
+        return recaudacion;
+    }
+
+    // calcula la recaudacion de los cajeros y la fecha 
+    public double calcularRecaudacionPorCajeroPorFecha(long idCajero, LocalDate fecha) {
+        double total = 0;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "SELECT coalesce(SUM(d.cantidad * d.precioUnitario), 0) " +
+                         "FROM Cajero c " +
+                         "INNER JOIN c.unidadAsignada uv " +
+                         "INNER JOIN uv.pedidos p " +
+                         "INNER JOIN p.detalles d " +
+                         "WHERE c.id = :idCajero AND p.fechaTransaccion = :fecha";
+            
+            Query<Double> q = session.createQuery(hql, Double.class);
+            q.setParameter("idCajero", idCajero);
+            q.setParameter("fecha", fecha);
+            total = q.uniqueResult();
         } finally {
             session.close();
         }
         return total;
+    } 
+    
+ // Cajero que mas recaudo de forma global
+    public List<Cajero> traerCajeroQueMasRecaudo() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "SELECT c FROM Cajero c " +
+                         "INNER JOIN c.unidadAsignada uv " +
+                         "INNER JOIN uv.pedidos p " +
+                         "INNER JOIN p.detalles d " +
+                         "GROUP BY c.id ORDER BY SUM(d.cantidad * d.precioUnitario) DESC";
+            Query<Cajero> q = session.createQuery(hql, Cajero.class);
+            q.setMaxResults(1);
+            return q.getResultList();
+        } finally { session.close(); }
     }
+
+    public List<Cajero> traerCajeroQueMasRecaudoPorFecha(LocalDate fecha) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "SELECT c FROM Cajero c " +
+                         "INNER JOIN c.unidadAsignada uv " +
+                         "INNER JOIN uv.pedidos p " +
+                         "INNER JOIN p.detalles d " +
+                         "WHERE p.fechaTransaccion = :fecha " +
+                         "GROUP BY c.id ORDER BY SUM(d.cantidad * d.precioUnitario) DESC";
+            Query<Cajero> q = session.createQuery(hql, Cajero.class);
+            q.setParameter("fecha", fecha);
+            q.setMaxResults(1);
+            return q.getResultList();
+        } finally { session.close(); }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 }

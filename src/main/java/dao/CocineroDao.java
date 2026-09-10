@@ -1,11 +1,11 @@
 package dao;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import datos.Cocinero;
 
 public class CocineroDao {
@@ -48,11 +48,21 @@ public class CocineroDao {
         return id;
     }
     
+  
     public Cocinero traer(long idCocinero) {
         Cocinero cocinero = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            iniciaOperacion();
-            cocinero = session.get(Cocinero.class, idCocinero);
+            // si Cocinero tiene unidadAsignada
+            String hql = "from Cocinero c inner join fetch c.unidadAsignada where c.id = :id";
+            cocinero = session.createQuery(hql, Cocinero.class)
+                               .setParameter("id", idCocinero)
+                               .uniqueResult();
+        } catch (Exception e) {
+            // fallback si Cocinero no tiene unidadAsignada
+            Session s2 = HibernateUtil.getSessionFactory().openSession();
+            try { cocinero = s2.get(Cocinero.class, idCocinero); } 
+            finally { s2.close(); }
         } finally {
             session.close();
         }
@@ -60,19 +70,29 @@ public class CocineroDao {
     }
 
     public Set<Cocinero> traerTodas() {
-        Set<Cocinero> set = null;
+        Set<Cocinero> set;
+        Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            iniciaOperacion();
-            Query<Cocinero> query = session.createQuery("from Cocinero c order by c.id", Cocinero.class);
-            set = new LinkedHashSet<>(query.getResultList());
+            String hql = "from Cocinero c inner join fetch c.unidadAsignada uv inner join fetch uv.festival order by c.id";
+            List<Cocinero> lista = session.createQuery(hql, Cocinero.class).list();
+            set = new LinkedHashSet<>(lista);
         } finally {
             session.close();
         }
         return set;
     }
 
-    public Set<Cocinero> traer() {
-        return traerTodas();
+    public Set<Cocinero> traerCocinerosOrdenados() {
+        Set<Cocinero> set;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "from Cocinero c order by c.apellido asc, c.nombre asc";
+            List<Cocinero> lista = session.createQuery(hql, Cocinero.class).list();
+            set = new LinkedHashSet<>(lista);
+        } finally {
+            session.close();
+        }
+        return set;
     }
 
     public void actualizar(Cocinero objeto) {

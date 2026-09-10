@@ -17,7 +17,7 @@ public class Cocinero extends Personal {
 		this.plusCategoria = plusCategoria;
 	}
 	
-	// NUEVO: metodo para calcular el plus de los cocineros... 
+	//  metodo para calcular el plus de los cocineros... 
 	private double calcularPlusSegunEspecialidad() {
 		if (especialidad == null) return 0;
 		switch (especialidad.toLowerCase().trim()) {

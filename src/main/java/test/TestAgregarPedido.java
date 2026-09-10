@@ -23,7 +23,7 @@ public class TestAgregarPedido {
 
         List<UnidadVenta> unidades = new ArrayList<>(unidadABM.traerTodas());
         List<Plato> platos = new ArrayList<>(platoABM.traerTodas());
-        List<Cajero> cajeros = new ArrayList<>(cajeroABM.traerTodos());
+        List<Cajero> cajeros = new ArrayList<>(cajeroABM.traerTodas());
 
         System.out.println("Unidades: " + unidades.size() + " | Platos: " + platos.size() + " | Cajeros: " + cajeros.size());
 
