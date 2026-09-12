@@ -29,7 +29,7 @@ public class PedidoABM {
 
         return instancia;
     }
-
+ 
     // --------------------------------------------------
     // ALTA - Crea pedido con 1 detalle
     // --------------------------------------------------
@@ -212,25 +212,18 @@ public class PedidoABM {
         }
         return 0;
     }
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
     
     
-    
-    
-    
-    
-    
-    
-    
-    
+    /////////////////////metodos para el TestFrancoHegele /////////////////////////////////////////////////////////////
+
+    public datos.Cajero traerCajeroQueMasRecaudoEntreFechas(LocalDate fechaDesde, LocalDate fechaHasta) {
+    	return dao.traerCajeroQueMasRecaudoEntreFechas(fechaDesde, fechaHasta);
+    }
+
+    public double calcularRecaudacionPorCajeroEntreDosFechas(long idCajero, LocalDate fechaDesde, LocalDate fechaHasta) {
+    	return dao.calcularRecaudacionPorCajeroEntreDosFechas(idCajero, fechaDesde, fechaHasta);
+    }
+ 
+
 
 }

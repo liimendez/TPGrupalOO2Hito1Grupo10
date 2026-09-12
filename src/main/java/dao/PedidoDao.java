@@ -1,5 +1,6 @@
 package dao;
 
+import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -308,7 +309,7 @@ public class PedidoDao {
             session.close();
         }
         return cajero;
-    }
+    } 
 
     public double calcularRecaudacionPorCajeroEnFestival(long idCajero, long idFestival) {
         Double total = 0.0;
@@ -318,6 +319,64 @@ public class PedidoDao {
                          "inner join ped.unidadVenta uv inner join ped.detalles det inner join det.plato pla " +
                          "where ped.cajero.id = :idCajero and uv.festival.id = :idFestival";
             total = session.createQuery(hql, Double.class).setParameter("idCajero", idCajero).setParameter("idFestival", idFestival).uniqueResult();
+        } finally {
+            session.close();
+        }
+        return total != null ? total : 0;
+    }
+    
+ 
+     
+//--------------------------------------------------------------------------------------------------------
+    
+    
+    // =========================================================
+    // TestFrancoHegele.
+    // - Un cajero tiene muchos Pedidos: Cajero (1)-----(*) Pedido.
+    // - Un pedido tiene muchos detalles: Pedido (1)-----(*) DetallePedido.
+    // - Dentro de los detalles de pedido
+    // podemos tener muchos platos: DetallePedido (1)-----(*) Plato.
+    // =========================================================
+    
+    
+    public datos.Cajero traerCajeroQueMasRecaudoEntreFechas(LocalDate fechaDesde, LocalDate fechaHasta) {
+        datos.Cajero cajero = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "select ped.cajero from Pedido ped " +
+                         "inner join ped.detalles det " +
+                         "inner join det.plato pla " +
+                         "where ped.fechaTransaccion between :fechaDesde and :fechaHasta " +
+                         "group by ped.cajero.id " +
+                         "order by sum(det.cantidad * pla.precioVenta) desc";
+                         
+            cajero = session.createQuery(hql, datos.Cajero.class)
+                    .setParameter("fechaDesde", fechaDesde)
+                    .setParameter("fechaHasta", fechaHasta)
+                    .setMaxResults(1)
+                    .uniqueResult();
+        } finally {
+            session.close();
+        }
+        return cajero;
+    }
+    
+    
+    public double calcularRecaudacionPorCajeroEntreDosFechas(long idCajero, LocalDate fechaDesde, LocalDate fechaHasta) {
+        Double total = 0.0;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        try {
+            String hql = "select sum(det.cantidad * pla.precioVenta) from Pedido ped " +
+                         "inner join ped.detalles det " +
+                         "inner join det.plato pla " +
+                         "where ped.cajero.id = :idCajero " +
+                         "and ped.fechaTransaccion between :fechaDesde and :fechaHasta";
+                         
+            total = session.createQuery(hql, Double.class)
+                    .setParameter("idCajero", idCajero)
+                    .setParameter("fechaDesde", fechaDesde)
+                    .setParameter("fechaHasta", fechaHasta)
+                    .uniqueResult();
         } finally {
             session.close();
         }

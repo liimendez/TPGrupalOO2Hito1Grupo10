@@ -1,6 +1,7 @@
 package dao;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,12 +10,15 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import datos.Cajero;
+import datos.Pedido;
 
 public class CajeroDao {
     
     private Session session;
     private Transaction tx;
     private static CajeroDao instancia = null;
+    private PedidoDao pedidoDao = PedidoDao.getInstancia();
+
 
     protected CajeroDao() {}
 
@@ -198,6 +202,31 @@ public class CajeroDao {
             return q.getResultList();
         } finally { session.close(); }
     }
+    
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     

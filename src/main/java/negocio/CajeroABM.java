@@ -4,12 +4,17 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import dao.CajeroDao;
+import dao.PedidoDao;
 import datos.Cajero;
+import datos.Pedido;
+
 
 public class CajeroABM {
 
     private static CajeroABM instancia = null;
     private CajeroDao dao = CajeroDao.getInstancia();
+    private PedidoDao pedidoDao = PedidoDao.getInstancia();
+
 
     protected CajeroABM() {}
 
@@ -78,14 +83,14 @@ public class CajeroABM {
                 maxRecaudacion = rec;
                 maxCajero = c;
             }
-        }
+        } 
         return maxCajero;
     }
 
-    public Cajero traerCajeroQueMasRecaudoPorFecha(LocalDate fecha) throws Exception {
-        if (fecha == null) throw new Exception("Fecha nula");
-        List<Cajero> lista = dao.traerCajeroQueMasRecaudoPorFecha(fecha);
-        if (lista.isEmpty()) throw new Exception("No hubo ventas en fecha: " + fecha);
-        return lista.get(0);
-    }
+
+    
+    
+
+    
+    
 }
