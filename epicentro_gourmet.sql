@@ -27,6 +27,12 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `cajero`
 --
 
+CREATE DATABASE IF NOT EXISTS `epicentro_gourmet` 
+DEFAULT CHARACTER SET utf8mb4 
+COLLATE utf8mb4_unicode_ci;
+
+USE `epicentro_gourmet`;
+
 DROP TABLE IF EXISTS `cajero`;
 CREATE TABLE IF NOT EXISTS `cajero` (
   `id` bigint NOT NULL,

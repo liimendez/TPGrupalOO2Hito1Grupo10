@@ -142,19 +142,15 @@ public class UnidadVentaABM {
         return dao.traerOrdenadasPorMayorSuperficie();
     }
     
-
 	// CONSULTA 1
 	public List<PuestoDesarmable> traerPuestosPorTiempoMontaje(Festival festival, int desde, int hasta) {
-
 		return dao.traerPuestosPorTiempoMontaje(festival, desde, hasta);
 	}
 
 	// CONSULTA 2
 	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) {
-
 		return dao.traerFoodTrucksConConexionElectrica(festival);
 	}
-	
 	
 	//-------------------------------------------------------------------------------------------
 	// muchos pedidos se hacen en un festival : Pedido -> Festival (ManyToOne)

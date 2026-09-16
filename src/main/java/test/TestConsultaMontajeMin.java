@@ -14,7 +14,7 @@ public class TestConsultaMontajeMin {
 		FestivalABM festivalABM = FestivalABM.getInstancia();
 		UnidadVentaABM unidadVentaABM = UnidadVentaABM.getInstancia();
 
-		long idFestival = 1L;
+		long idFestival = 2L;
 
 		Festival festival = festivalABM.traer(idFestival);
 

@@ -4,6 +4,7 @@ package datos;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.Objects;
 
 public abstract class UnidadVenta {
 	
@@ -132,6 +133,23 @@ public abstract class UnidadVenta {
 	            + " | Superficie: " + superficieM2 + " m²"
 	            + " | Festival: " + festival.getId();
 	}
+	
+	@Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        UnidadVenta other = (UnidadVenta) obj;
+        return Objects.equals(id, other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
 	public String mostrarDetalleConPlatos() {
 	    StringBuilder sb = new StringBuilder();

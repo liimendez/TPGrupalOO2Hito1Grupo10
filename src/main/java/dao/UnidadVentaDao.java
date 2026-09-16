@@ -245,29 +245,21 @@ public class UnidadVentaDao {
     }
     
 
-	// CONSULTA 1: Trae todos los PuestoDesarmable de un Festival que su tiempo de montaje(tiempoMontajeMin) este en un rango indicado.
-	// Se recibe el objeto Festival y se utiliza INNER JOIN para relacionar la UnidadVenta con el Festival.
+    // CONSULTA 1: Trae todos los PuestoDesarmable de un Festival que su tiempo de montaje(tiempoMontajeMin) este en un rango indicado.
 	public List<PuestoDesarmable> traerPuestosPorTiempoMontaje(Festival festival, int desde, int hasta) {
 
 		List<PuestoDesarmable> lista = null;
-        Session session = HibernateUtil.getSessionFactory().openSession();
 
 		try {
-
-			// OPCION 1: Se recibe el objeto Festival, luego se utiliza INNER JOIN para relacionarlo y por ultimo lo compara directamente en el WHERE
-			// String hql = "FROM PuestoDesarmable p " + "INNER JOIN p.festival f " + "WHERE f = :festival " + "AND p.tiempoMontajeMin BETWEEN :desde AND :hasta";
-
-			// OPCION 2: Se utiliza el ID del Festival para realizar el filtro
-			String hql = "FROM PuestoDesarmable p " + "INNER JOIN p.festival f " + "WHERE f.id = :idFestival " + "AND p.tiempoMontajeMin BETWEEN :desde AND :hasta";
+			
+			iniciaOperacion();
+			
+			String hql = "FROM PuestoDesarmable p " + "INNER JOIN FETCH p.festival f " + "WHERE f = :festival "
+					+ "AND p.tiempoMontajeMin BETWEEN :desde AND :hasta";
 
 			Query<PuestoDesarmable> query = session.createQuery(hql, PuestoDesarmable.class);
 
-			// OPCION 1:
-			// query.setParameter("festival", festival);
-
-			// OPCION 2:
-			query.setParameter("idFestival", festival.getId());
-
+			query.setParameter("festival", festival);
 			query.setParameter("desde", desde);
 			query.setParameter("hasta", hasta);
 
@@ -280,28 +272,21 @@ public class UnidadVentaDao {
 		return lista;
 	}
 
-	// CONSULTA 2: Trae todos los FoodTruck de un Festival que requieren conexión eléctrica(requiereConexionElectrica) 
-	// Se recibe el objeto Festival y se utiliza INNER JOIN para relacionar la UnidadVenta con el Festival.
+	// CONSULTA 2: Trae todos los FoodTruck de un Festival que requieren conexión eléctrica(requiereConexionElectrica)).
 	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) {
 
 		List<FoodTruck> lista = null;
-        Session session = HibernateUtil.getSessionFactory().openSession();
 
 		try {
 
-			// OPCION 1: Se recibe el objeto Festival, luego se utiliza INNER JOIN para relacionarlo y por ultimo lo compara directamente en el WHERE
-			// String hql = "FROM FoodTruck f " + "INNER JOIN f.festival festival " + "WHERE festival = :festival " + "AND f.requiereConexionElectrica = true";
-
-			// OPCION 2: Se utiliza el ID del Festival para realizar el filtro
-			String hql = "FROM FoodTruck f " + "INNER JOIN f.festival festival " + "WHERE festival.id = :idFestival " + "AND f.requiereConexionElectrica = true";
+			iniciaOperacion();
+			
+			String hql = "FROM FoodTruck f " + "INNER JOIN FETCH f.festival festival " + "WHERE festival = :festival "
+					+ "AND f.requiereConexionElectrica = true";
 
 			Query<FoodTruck> query = session.createQuery(hql, FoodTruck.class);
 
-			// OPCION 1:
-			// query.setParameter("festival", festival);
-
-			// OPCION 2:
-			query.setParameter("idFestival", festival.getId());
+			query.setParameter("festival", festival);
 
 			lista = query.getResultList();
 
@@ -312,4 +297,9 @@ public class UnidadVentaDao {
 		return lista;
 	}
 
+	
+	
+	
+	
+	
 }
