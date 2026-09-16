@@ -216,8 +216,16 @@ public class PedidoABM {
     
     /////////////////////metodos para el TestFrancoHegele /////////////////////////////////////////////////////////////
 
-    public datos.Cajero traerCajeroQueMasRecaudoEntreFechas(LocalDate fechaDesde, LocalDate fechaHasta) {
-    	return dao.traerCajeroQueMasRecaudoEntreFechas(fechaDesde, fechaHasta);
+    public Cajero traerCajeroQueMasRecaudoEntreFechas(LocalDate fechaDesde, LocalDate fechaHasta)throws Exception {
+    	
+    	Cajero retorno = dao.traerCajeroQueMasRecaudoEntreFechas(fechaDesde, fechaHasta);
+    	
+    	if(retorno == null) {
+    		
+        	throw new Exception("\n ERROR: no se registraron transacciones en ese perido de tiempo!!" + 
+        	"\n RECUDACION ---> NULL");
+    	}
+    	return retorno;
     }
 
     public double calcularRecaudacionPorCajeroEntreDosFechas(long idCajero, LocalDate fechaDesde, LocalDate fechaHasta) {

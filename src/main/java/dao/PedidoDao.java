@@ -357,7 +357,7 @@ public class PedidoDao {
                     .uniqueResult();
         } finally {
             session.close();
-        }
+        } 
         return cajero;
     }
     

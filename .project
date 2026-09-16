@@ -20,4 +20,11 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Diagrama_Grupo10_TPOO2.drawio.pdf</name>
+			<type>1</type>
+			<location>C:/Users/Usuario/Desktop/TP OO2/TPGrupalOO2Hito1Grupo10/Diagrama_Grupo10_TPOO2.drawio.pdf</location>
+		</link>
+	</linkedResources>
 </projectDescription>
