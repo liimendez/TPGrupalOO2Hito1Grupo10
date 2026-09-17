@@ -9,21 +9,14 @@ import negocio.UnidadVentaABM;
 
 public class TestConsultaMontajeMin {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		
-		//
-
 		FestivalABM festivalABM = FestivalABM.getInstancia();
-		UnidadVentaABM unidadVentaABM = UnidadVentaABM.getInstancia();
+        UnidadVentaABM unidadVentaABM = UnidadVentaABM.getInstancia();
 
 		long idFestival = 2L;
 
 		Festival festival = festivalABM.traer(idFestival);
-
-		if (festival == null) {
-			System.out.println("No existe el festival con el id " + idFestival);
-			return;
-		}
 
 		// Rango tiempoMontajeMin
 		int desde = 20;
@@ -41,16 +34,9 @@ public class TestConsultaMontajeMin {
 		System.out.println("Festival: " + festival.getNombre());
 		System.out.println("Rango de tiempoMontajeMin: " + desde + " a " + hasta + " minutos");
 
-		if (puestos.isEmpty()) {
-			System.out.println("No se encontraron puestos desarmables.");
-			return;
-		}
-
 		// Mostrar los datos mediante getters
 		for (PuestoDesarmable puesto : puestos) {
-
 			System.out.println("------------------------------------------");
-
 			System.out.println("ID: " + puesto.getId());
 			System.out.println("Nombre comercial: " + puesto.getNombreComercial());
 			System.out.println("Código único: " + puesto.getCodigoUnico());

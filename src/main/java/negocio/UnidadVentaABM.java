@@ -144,7 +144,19 @@ public class UnidadVentaABM {
     }
     
 	// CONSULTA 1
-	public List<PuestoDesarmable> traerPuestosPorTiempoMontaje(Festival festival, int desde, int hasta) {
+	public List<PuestoDesarmable> traerPuestosPorTiempoMontaje(Festival festival, int desde, int hasta) throws Exception {
+		
+		if (festival == null) {
+	        throw new Exception("ERROR: El festival ingresado no puede ser nulo");
+	    }
+
+	    if (desde < 0) {
+	        throw new Exception("ERROR: El valor 'desde' no puede ser negativo");
+	    }
+
+	    if (hasta < desde) {
+	        throw new Exception("ERROR: El tiempo de 'hasta' debe ser mayor o igual al tiempo 'desde'");
+	    }
 		return dao.traerPuestosPorTiempoMontaje(festival, desde, hasta);
 	}
 
