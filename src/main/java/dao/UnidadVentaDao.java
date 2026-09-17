@@ -297,9 +297,31 @@ public class UnidadVentaDao {
 		return lista;
 	}
 
-	
-	
-	
-	
+	// CONSULTA 3: Trae todos los FoodTruck de un Festival que ofrezcan al menos un Plato que su precio de venta sea mayor a un valor indicado(precioMinimo)
+	//             y al traer esos FoodTruck solo mostrara los platos que superen dicho valor indicado(precioMinimo)
+	public List<FoodTruck> traerFoodTrucksPorFestivalYPrecioPlato(Festival festival, double precioMinimo) {
+
+		List<FoodTruck> lista = null;
+
+		try {
+
+			iniciaOperacion();
+
+			String hql = "SELECT DISTINCT f FROM FoodTruck f " + "INNER JOIN FETCH f.festival festival " + "INNER JOIN FETCH f.platosOfrecidos plato " + "WHERE festival = :festival "
+					+ "AND plato.precioVenta > :precioMinimo";
+
+			Query<FoodTruck> query = session.createQuery(hql, FoodTruck.class);
+
+			query.setParameter("festival", festival);
+			query.setParameter("precioMinimo", precioMinimo);
+
+			lista = query.getResultList();
+
+		} finally {
+			session.close();
+		}
+
+		return lista;
+	}
 	
 }

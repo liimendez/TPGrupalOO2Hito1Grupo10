@@ -152,6 +152,11 @@ public class UnidadVentaABM {
 		return dao.traerFoodTrucksConConexionElectrica(festival);
 	}
 	
+	// CONSULTA 3
+	public List<FoodTruck> traerFoodTrucksPorFestivalYPrecioPlato(Festival festival, double precioMinimo) {
+		return dao.traerFoodTrucksPorFestivalYPrecioPlato(festival, precioMinimo);
+	}
+	
 	//-------------------------------------------------------------------------------------------
 	// muchos pedidos se hacen en un festival : Pedido -> Festival (ManyToOne)
 	// muchas unidades de venta pertenecen a un festival : UnidadVenta -> Festival (ManyToOne)
