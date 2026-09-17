@@ -151,27 +151,50 @@ public class UnidadVentaABM {
 	    }
 
 	    if (desde < 0) {
-	        throw new Exception("ERROR: El valor 'desde' no puede ser negativo");
+	        throw new Exception("ERROR: el valor 'desde' no puede ser negativo");
 	    }
 
 	    if (hasta < desde) {
-	        throw new Exception("ERROR: El tiempo de 'hasta' debe ser mayor o igual al tiempo 'desde'");
+	        throw new Exception("ERROR: el tiempo de 'hasta' debe ser mayor o igual al tiempo 'desde'");
 	    }
 		return dao.traerPuestosPorTiempoMontaje(festival, desde, hasta);
 	}
 
 	// CONSULTA 2
-	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) {
+	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) throws Exception {
+		
+		if (festival == null) {
+	        throw new Exception("ERROR: El festival ingresado no puede ser nulo");
+	    }
+		
 		return dao.traerFoodTrucksConConexionElectrica(festival);
 	}
 	
 	// CONSULTA 3
-	public List<FoodTruck> traerFoodTrucksPorFestivalYPrecioPlato(Festival festival, double precioMinimo) {
+	public List<FoodTruck> traerFoodTrucksPorFestivalYPrecioPlato(Festival festival, double precioMinimo) throws Exception {
+		
+		if (festival == null) {
+	        throw new Exception("ERROR: el festival ingresado no puede ser nulo");
+	    }
+
+	    if (precioMinimo < 0) {
+	        throw new Exception("ERROR: el precio mínimo no puede ser negativo");
+	    }
+		
 		return dao.traerFoodTrucksPorFestivalYPrecioPlato(festival, precioMinimo);
 	}
 	
 	// CONSULTA 4
-	public List<UnidadVenta> traerUnidadesVentaPorFechaIngresoPersonal(LocalDate fechaDesde) {
+	public List<UnidadVenta> traerUnidadesVentaPorFechaIngresoPersonal(LocalDate fechaDesde) throws Exception {
+		
+		if (fechaDesde == null) {
+	        throw new Exception("ERROR: la fecha ingresada no puede ser nula");
+	    }
+
+	    if (fechaDesde.isAfter(LocalDate.now())) {
+	        throw new Exception("ERROR: la fecha ingresada no puede ser posterior a la fecha actual");
+	    }
+		
 		return dao.traerUnidadesVentaPorFechaIngresoPersonal(fechaDesde);
 	}
 	

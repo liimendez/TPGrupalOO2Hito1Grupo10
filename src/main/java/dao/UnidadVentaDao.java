@@ -273,7 +273,7 @@ public class UnidadVentaDao {
 		return lista;
 	}
 
-	// CONSULTA 2: Trae todos los FoodTruck de un Festival que requieren conexión eléctrica(requiereConexionElectrica)).
+	// CONSULTA 2: Trae todos los FoodTruck de un Festival que requieren conexión eléctrica(requiereConexionElectrica).
 	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) {
 
 		List<FoodTruck> lista = null;
