@@ -27,11 +27,14 @@ public class TestConsultaPrecioMinFT {
 		// precioMinimo
 		double precioMinimo = 14000.0;
 
-		// CONSULTA
 		List<FoodTruck> foodTrucks = unidadVentaABM.traerFoodTrucksPorFestivalYPrecioPlato(festival, precioMinimo);
 
 		System.out.println("CONSULTA 3 - Trae todos los FoodTruck de un Festival que ofrezcan al menos un Plato que su precio de venta sea mayor a un valor indicado(precioMinimo)\n"
-				                         + "y al traer esos FoodTruck solo mostrara los platos que superen dicho valor indicado(precioMinimo)");
+				                         + "y al traer esos FoodTruck solo mostrara los platos que superen dicho valor indicado(precioMinimo)\n");
+		
+		System.out.println("UnidadVenta <----- PuestoDesarmable | Herencia");
+		System.out.println("UnidadVenta(FoodTruck) (1) ----- (0...*) Plato | Uno a Muchos\n");
+		
 		System.out.println("------------------------------------------");
 
 		System.out.println("Festival: " + festival.getNombre());
