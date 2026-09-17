@@ -10,7 +10,7 @@ import negocio.UnidadVentaABM;
 
 public class TestConsultaPrecioMinFT {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
 		FestivalABM festivalABM = FestivalABM.getInstancia();
 		UnidadVentaABM unidadVentaABM = UnidadVentaABM.getInstancia();

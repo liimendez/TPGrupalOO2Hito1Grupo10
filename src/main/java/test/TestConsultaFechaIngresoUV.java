@@ -11,12 +11,12 @@ import negocio.UnidadVentaABM;
 
 public class TestConsultaFechaIngresoUV {
 
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) {
 
 		UnidadVentaABM unidadVentaABM = UnidadVentaABM.getInstancia();
 
 		// Fecha que indica desde cuando mostrar el Personal que ingreso a su respectiva UnidadVenta
-		LocalDate fechaDesde = LocalDate.of(2026, 8, 8);
+		LocalDate fechaDesde = LocalDate.of(2026, 9, 3);
 
 		try {
 			List<UnidadVenta> unidadesVenta = unidadVentaABM.traerUnidadesVentaPorFechaIngresoPersonal(fechaDesde);
