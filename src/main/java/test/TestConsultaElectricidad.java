@@ -23,11 +23,13 @@ public class TestConsultaElectricidad {
 			return;
 		}
 
-		// CONSULTA
 		List<FoodTruck> foodTrucks = unidadVentaABM.traerFoodTrucksConConexionElectrica(festival);
 
-		System.out.println("CONSULTA 2 - Trae todos los FoodTruck de un Festival que requieren conexión eléctrica(requiereConexionElectrica = true).");
+		System.out.println("CONSULTA 2 - Trae todos los FoodTruck de un Festival que requieren conexión eléctrica(requiereConexionElectrica = true)\n");
 
+		System.out.println("Festival (1) ----- (1...*) UnidadVenta | Uno a Muchos");
+		System.out.println("UnidadVenta <----- FoodTruck | Herencia\n");
+		
 		System.out.println("------------------------------------------");
 
 		System.out.println("Festival: " + festival.getNombre());

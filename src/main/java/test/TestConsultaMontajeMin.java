@@ -10,6 +10,8 @@ import negocio.UnidadVentaABM;
 public class TestConsultaMontajeMin {
 
 	public static void main(String[] args) {
+		
+		//
 
 		FestivalABM festivalABM = FestivalABM.getInstancia();
 		UnidadVentaABM unidadVentaABM = UnidadVentaABM.getInstancia();
@@ -27,10 +29,13 @@ public class TestConsultaMontajeMin {
 		int desde = 20;
 		int hasta = 60;
 
-		// CONSULTA
 		List<PuestoDesarmable> puestos = unidadVentaABM.traerPuestosPorTiempoMontaje(festival, desde, hasta);
 
-		System.out.println("CONSULTA 1 - Trae todos los PuestoDesarmable de un Festival que su tiempo de montaje(tiempoMontajeMin) este en un rango indicado.");
+		System.out.println("CONSULTA 1 - Trae todos los PuestoDesarmable de un Festival que su tiempo de montaje(tiempoMontajeMin) este en un rango indicado.\n");
+		
+		System.out.println("Festival (1) ----- (1...*) UnidadVenta | Uno a Muchos");
+		System.out.println("UnidadVenta <----- PuestoDesarmable | Herencia\n");
+		
 		System.out.println("------------------------------------------");
 
 		System.out.println("Festival: " + festival.getNombre());

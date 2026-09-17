@@ -2,6 +2,7 @@ package negocio;
 
 import java.util.List;
 import java.util.Set;
+import java.time.LocalDate;
 
 import dao.UnidadVentaDao;
 import datos.Festival;
@@ -150,6 +151,16 @@ public class UnidadVentaABM {
 	// CONSULTA 2
 	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) {
 		return dao.traerFoodTrucksConConexionElectrica(festival);
+	}
+	
+	// CONSULTA 3
+	public List<FoodTruck> traerFoodTrucksPorFestivalYPrecioPlato(Festival festival, double precioMinimo) {
+		return dao.traerFoodTrucksPorFestivalYPrecioPlato(festival, precioMinimo);
+	}
+	
+	// CONSULTA 4
+	public List<UnidadVenta> traerUnidadesVentaPorFechaIngresoPersonal(LocalDate fechaDesde) {
+		return dao.traerUnidadesVentaPorFechaIngresoPersonal(fechaDesde);
 	}
 	
 	//-------------------------------------------------------------------------------------------
