@@ -9,6 +9,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import datos.Cajero;
 import datos.Pedido;
 
 public class PedidoDao {
@@ -339,8 +340,8 @@ public class PedidoDao {
     // =========================================================
     
     
-    public datos.Cajero traerCajeroQueMasRecaudoEntreFechas(LocalDate fechaDesde, LocalDate fechaHasta) {
-        datos.Cajero cajero = null;
+    public Cajero traerCajeroQueMasRecaudoEntreFechas(LocalDate fechaDesde, LocalDate fechaHasta) {
+        Cajero cajero = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             String hql = "select ped.cajero from Pedido ped " +
@@ -357,7 +358,7 @@ public class PedidoDao {
                     .uniqueResult();
         } finally {
             session.close();
-        }
+        } 
         return cajero;
     }
     

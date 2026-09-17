@@ -29,4 +29,4 @@ public class TestLiiMendezReporteEjecutivo {
         System.out.println("Plato MAS RENTABLE (cantidad por precio): " + masRentable.getNombre() + " ID:" + masRentable.getId());
         System.out.println("Cajero TOP en ese festival: " + cajeroTop.getNombre() + " " + cajeroTop.getApellido() + " ID:" + cajeroTop.getId() + " | Recaudo: $" + recCajero);
     }
-} 
+}
