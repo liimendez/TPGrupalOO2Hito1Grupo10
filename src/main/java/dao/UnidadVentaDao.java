@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.time.LocalDate;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -15,6 +16,7 @@ import datos.FoodTruck;
 import datos.Plato;
 import datos.PuestoDesarmable;
 import datos.UnidadVenta;
+import datos.Personal;
 
 public class UnidadVentaDao {
 
@@ -244,16 +246,15 @@ public class UnidadVentaDao {
         return ejecutarConsultaLista(hql, null);
     }
     
-
-    // CONSULTA 1: Trae todos los PuestoDesarmable de un Festival que su tiempo de montaje(tiempoMontajeMin) este en un rango indicado.
+	// CONSULTA 1: Trae todos los PuestoDesarmable de un Festival que su tiempo de montaje(tiempoMontajeMin) este en un rango indicado.
 	public List<PuestoDesarmable> traerPuestosPorTiempoMontaje(Festival festival, int desde, int hasta) {
 
 		List<PuestoDesarmable> lista = null;
 
 		try {
-			
+
 			iniciaOperacion();
-			
+
 			String hql = "FROM PuestoDesarmable p " + "INNER JOIN FETCH p.festival f " + "WHERE f = :festival "
 					+ "AND p.tiempoMontajeMin BETWEEN :desde AND :hasta";
 
@@ -280,7 +281,7 @@ public class UnidadVentaDao {
 		try {
 
 			iniciaOperacion();
-			
+
 			String hql = "FROM FoodTruck f " + "INNER JOIN FETCH f.festival festival " + "WHERE festival = :festival "
 					+ "AND f.requiereConexionElectrica = true";
 
@@ -307,7 +308,8 @@ public class UnidadVentaDao {
 
 			iniciaOperacion();
 
-			String hql = "SELECT DISTINCT f FROM FoodTruck f " + "INNER JOIN FETCH f.festival festival " + "INNER JOIN FETCH f.platosOfrecidos plato " + "WHERE festival = :festival "
+			String hql = "SELECT DISTINCT f FROM FoodTruck f " + "INNER JOIN FETCH f.festival festival "
+					+ "INNER JOIN FETCH f.platosOfrecidos plato " + "WHERE festival = :festival "
 					+ "AND plato.precioVenta > :precioMinimo";
 
 			Query<FoodTruck> query = session.createQuery(hql, FoodTruck.class);
@@ -323,5 +325,28 @@ public class UnidadVentaDao {
 
 		return lista;
 	}
-	
+
+	// CONSULTA 4: Trae todo el personal (Cajero o Cocinero) de una UnidadVenta (FoodTruck o PuestoDesarmable) que ingresó a partir de una fecha indicada(fechaDesde)
+	public List<UnidadVenta> traerUnidadesVentaPorFechaIngresoPersonal(LocalDate fechaDesde) {
+
+		List<UnidadVenta> lista = null;
+
+		try {
+			iniciaOperacion();
+
+			String hql = "SELECT DISTINCT u FROM UnidadVenta u " + "INNER JOIN FETCH u.staff personal "
+					+ "WHERE personal.fechaDeIngreso >= :fechaDesde";
+
+			Query<UnidadVenta> query = session.createQuery(hql, UnidadVenta.class);
+
+			query.setParameter("fechaDesde", fechaDesde);
+
+			lista = query.getResultList();
+
+		} finally {
+			session.close();
+		}
+
+		return lista;
+	}
 }
