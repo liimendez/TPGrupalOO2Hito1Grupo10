@@ -7,7 +7,7 @@ Grupo 10
 
 Cecilia Livia Mendez - liimendez - testConsultaPedido - detallePedido 1 - * pedido.
 Valentin Franco Hegele - FrancoHegele - TestConsultaCocinero - Cocinero - Personal: Herencia 1 a *.
-Santiago Sosa - santisosa-gh - TestConsultaFestival - Festival - UnidadVenta: Uno a Muchos.
+Santiago Sosa | santisosa-gh | TestConsultaMontajeMin, TestConsultaElectricidad, TestConsultaPrecioMaxFT.
 
 
 
