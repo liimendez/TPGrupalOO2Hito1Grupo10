@@ -15,19 +15,21 @@ public class TestConsultaElectricidad {
 		UnidadVentaABM unidadVentaABM = UnidadVentaABM.getInstancia();
 
 		long idFestival = 2L;
+		boolean requiereConexionElectrica = false;
+		// boolean requiereConexionElectrica = false;
 
 		try {
 
 			Festival festival = festivalABM.traer(idFestival);
-			List<FoodTruck> foodTrucks = unidadVentaABM.traerFoodTrucksConConexionElectrica(festival);
+			List<FoodTruck> foodTrucks = unidadVentaABM.traerFoodTrucksConConexionElectrica(festival, requiereConexionElectrica);
 
-			System.out.println("CONSULTA 2 - Trae todos los FoodTruck de un Festival que requieren conexión eléctrica(requiereConexionElectrica = true)\n");
+			System.out.println("CONSULTA 2 - Trae todos los FoodTruck de un Festival dependiendo si requiere conexion electrica o no(requiereConexionElectrica = TRUE or FALSE\n");
 			System.out.println("Festival (1) ----- (1...*) UnidadVenta | Uno a Muchos");
 			System.out.println("UnidadVenta <----- FoodTruck | Herencia\n");
 			System.out.println("------------------------------------------");
 
 			System.out.println("Festival: " + festival.getNombre());
-			System.out.println("requiereConexionElectrica: TRUE");
+			System.out.println("requiereConexionElectrica: " + requiereConexionElectrica);
 
 			// Mostrar los datos mediante getters
 			for (FoodTruck foodTruck : foodTrucks) {

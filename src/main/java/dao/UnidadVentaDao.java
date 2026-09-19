@@ -273,8 +273,8 @@ public class UnidadVentaDao {
 		return lista;
 	}
 
-	// CONSULTA 2: Trae todos los FoodTruck de un Festival que requieren conexión eléctrica(requiereConexionElectrica).
-	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) {
+	// CONSULTA 2: Trae todos los FoodTruck de un Festival dependiendo si requiere conexion electrica o no(requiereConexionElectrica = TRUE or FALSE).
+	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival, boolean requiereConexionElectrica) {
 
 		List<FoodTruck> lista = null;
 
@@ -283,11 +283,12 @@ public class UnidadVentaDao {
 			iniciaOperacion();
 
 			String hql = "FROM FoodTruck f " + "INNER JOIN FETCH f.festival festival " + "WHERE festival = :festival "
-					+ "AND f.requiereConexionElectrica = true";
+					+ "AND f.requiereConexionElectrica = :requiereConexionElectrica";
 
 			Query<FoodTruck> query = session.createQuery(hql, FoodTruck.class);
 
 			query.setParameter("festival", festival);
+			query.setParameter("requiereConexionElectrica", requiereConexionElectrica);
 
 			lista = query.getResultList();
 
@@ -298,9 +299,9 @@ public class UnidadVentaDao {
 		return lista;
 	}
 
-	// CONSULTA 3: Trae todos los FoodTruck de un Festival que ofrezcan al menos un Plato que su precio de venta sea mayor a un valor indicado(precioMinimo)
-	//             y al traer esos FoodTruck solo mostrara los platos que superen dicho valor indicado(precioMinimo)
-	public List<FoodTruck> traerFoodTrucksPorFestivalYPrecioPlato(Festival festival, double precioMinimo) {
+	// CONSULTA 3: Trae todos los FoodTruck de un Festival que ofrezcan al menos un Plato con precio de venta menor o igual a un valor indicado (precioMaximo)
+		//             y al traer esos FoodTruck solo mostrara los platos que no superen dicho valor indicado(precioMaximo).
+	public List<FoodTruck> traerFoodTrucksPorFestivalYPrecioPlatoMax(Festival festival, double precioMaximo) {
 
 		List<FoodTruck> lista = null;
 
@@ -310,36 +311,12 @@ public class UnidadVentaDao {
 
 			String hql = "SELECT DISTINCT f FROM FoodTruck f " + "INNER JOIN FETCH f.festival festival "
 					+ "INNER JOIN FETCH f.platosOfrecidos plato " + "WHERE festival = :festival "
-					+ "AND plato.precioVenta > :precioMinimo";
+					+ "AND plato.precioVenta <= :precioMaximo";
 
 			Query<FoodTruck> query = session.createQuery(hql, FoodTruck.class);
 
 			query.setParameter("festival", festival);
-			query.setParameter("precioMinimo", precioMinimo);
-
-			lista = query.getResultList();
-
-		} finally {
-			session.close();
-		}
-
-		return lista;
-	}
-
-	// CONSULTA 4: Trae todo el personal (Cajero o Cocinero) de una UnidadVenta (FoodTruck o PuestoDesarmable) que ingresó a partir de una fecha indicada(fechaDesde)
-	public List<UnidadVenta> traerUnidadesVentaPorFechaIngresoPersonal(LocalDate fechaDesde) {
-
-		List<UnidadVenta> lista = null;
-
-		try {
-			iniciaOperacion();
-
-			String hql = "SELECT DISTINCT u FROM UnidadVenta u " + "INNER JOIN FETCH u.staff personal "
-					+ "WHERE personal.fechaDeIngreso >= :fechaDesde";
-
-			Query<UnidadVenta> query = session.createQuery(hql, UnidadVenta.class);
-
-			query.setParameter("fechaDesde", fechaDesde);
+			query.setParameter("precioMaximo", precioMaximo);
 
 			lista = query.getResultList();
 

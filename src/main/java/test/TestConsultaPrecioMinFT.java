@@ -17,21 +17,21 @@ public class TestConsultaPrecioMinFT {
 
 		long idFestival = 2L;
 
-		// precioMinimo
-		double precioMinimo = 14000.0;
+		// precioMaximo
+		double precioMaximo = 7500.0;
 
 		try {
 			Festival festival = festivalABM.traer(idFestival);
-			List<FoodTruck> foodTrucks = unidadVentaABM.traerFoodTrucksPorFestivalYPrecioPlato(festival, precioMinimo);
+			List<FoodTruck> foodTrucks = unidadVentaABM.traerFoodTrucksPorFestivalYPrecioPlatoMax(festival, precioMaximo);
 
-			System.out.println("CONSULTA 3 - Trae todos los FoodTruck de un Festival que ofrezcan al menos un Plato que su precio de venta sea mayor a un valor indicado(precioMinimo)\n"
-							+ "y al traer esos FoodTruck solo mostrara los platos que superen dicho valor indicado(precioMinimo)\n");
+			System.out.println("CONSULTA 3 - Trae todos los FoodTruck de un Festival que ofrezcan al menos un Plato con precio de venta menor o igual a un valor indicado (precioMaximo)\n"
+							+ "y al traer esos FoodTruck solo mostrara los platos que no superen dicho valor indicado(precioMaximo)\n");
 			System.out.println("UnidadVenta <----- PuestoDesarmable | Herencia");
 			System.out.println("UnidadVenta(FoodTruck) (1) ----- (0...*) Plato | Uno a Muchos\n");
 			System.out.println("------------------------------------------");
 
 			System.out.println("Festival: " + festival.getNombre());
-			System.out.println("precioMinimo: $" + precioMinimo);
+			System.out.println("precioMaximo: $" + precioMaximo);
 
 			// Mostrar los datos mediante getters
 			for (FoodTruck ft : foodTrucks) {

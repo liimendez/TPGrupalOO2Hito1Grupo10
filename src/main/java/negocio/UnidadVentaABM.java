@@ -157,47 +157,46 @@ public class UnidadVentaABM {
 	    if (hasta < desde) {
 	        throw new Exception("ERROR: el tiempo de 'hasta' debe ser mayor o igual al tiempo 'desde'");
 	    }
+	    
+	    if(dao.traerPuestosPorTiempoMontaje(festival, desde, hasta).isEmpty()) {
+	    	throw new Exception("No se encontraron PuestoDesarmable cuyo tiempoMontajeMin este entre " + desde + " - " + hasta + " minutos");
+	    }
+	    
 		return dao.traerPuestosPorTiempoMontaje(festival, desde, hasta);
 	}
 
 	// CONSULTA 2
-	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival) throws Exception {
+	public List<FoodTruck> traerFoodTrucksConConexionElectrica(Festival festival, boolean requiereConexionElectrica) throws Exception {
 		
 		if (festival == null) {
 	        throw new Exception("ERROR: El festival ingresado no puede ser nulo");
 	    }
 		
-		return dao.traerFoodTrucksConConexionElectrica(festival);
+		if(dao.traerFoodTrucksConConexionElectrica(festival, requiereConexionElectrica).isEmpty()) {
+			throw new Exception("No se encontraron FoodTruck con requiereConexionElectrica = " + requiereConexionElectrica + " para el festival " + festival.getNombre());
+		}
+		
+		return dao.traerFoodTrucksConConexionElectrica(festival, requiereConexionElectrica);
 	}
 	
 	// CONSULTA 3
-	public List<FoodTruck> traerFoodTrucksPorFestivalYPrecioPlato(Festival festival, double precioMinimo) throws Exception {
+	public List<FoodTruck> traerFoodTrucksPorFestivalYPrecioPlatoMax(Festival festival, double precioMaximo) throws Exception {
 		
 		if (festival == null) {
 	        throw new Exception("ERROR: el festival ingresado no puede ser nulo");
 	    }
 
-	    if (precioMinimo < 0) {
-	        throw new Exception("ERROR: el precio mínimo no puede ser negativo");
+	    if (precioMaximo < 0) {
+	        throw new Exception("ERROR: el precio maximo no puede ser negativo");
+	    }
+	    
+	    if (dao.traerFoodTrucksPorFestivalYPrecioPlatoMax(festival, precioMaximo).isEmpty()) {
+	    	throw new Exception("No se encontraron platos cuyo valor sea menor o igual al precio indicado: $" + precioMaximo);
 	    }
 		
-		return dao.traerFoodTrucksPorFestivalYPrecioPlato(festival, precioMinimo);
+		return dao.traerFoodTrucksPorFestivalYPrecioPlatoMax(festival, precioMaximo);
 	}
-	
-	// CONSULTA 4
-	public List<UnidadVenta> traerUnidadesVentaPorFechaIngresoPersonal(LocalDate fechaDesde) throws Exception {
 		
-		if (fechaDesde == null) {
-	        throw new Exception("ERROR: la fecha ingresada no puede ser nula");
-	    }
-
-	    if (fechaDesde.isAfter(LocalDate.now())) {
-	        throw new Exception("ERROR: la fecha ingresada no puede ser posterior a la fecha actual");
-	    }
-		
-		return dao.traerUnidadesVentaPorFechaIngresoPersonal(fechaDesde);
-	}
-	
 	//-------------------------------------------------------------------------------------------
 	// muchos pedidos se hacen en un festival : Pedido -> Festival (ManyToOne)
 	// muchas unidades de venta pertenecen a un festival : UnidadVenta -> Festival (ManyToOne)
