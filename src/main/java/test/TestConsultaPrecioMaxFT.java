@@ -8,7 +8,7 @@ import datos.Plato;
 import negocio.FestivalABM;
 import negocio.UnidadVentaABM;
 
-public class TestConsultaPrecioMinFT {
+public class TestConsultaPrecioMaxFT {
 
 	public static void main(String[] args) {
 
