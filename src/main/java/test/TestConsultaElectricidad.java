@@ -15,7 +15,7 @@ public class TestConsultaElectricidad {
 		UnidadVentaABM unidadVentaABM = UnidadVentaABM.getInstancia();
 
 		long idFestival = 2L;
-		boolean requiereConexionElectrica = false;
+		boolean requiereConexionElectrica = true;
 		// boolean requiereConexionElectrica = false;
 
 		try {

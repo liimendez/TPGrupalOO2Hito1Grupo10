@@ -157,12 +157,14 @@ public class UnidadVentaABM {
 	    if (hasta < desde) {
 	        throw new Exception("ERROR: el tiempo de 'hasta' debe ser mayor o igual al tiempo 'desde'");
 	    }
+	    	    
+	    List<PuestoDesarmable> lista = dao.traerPuestosPorTiempoMontaje(festival, desde, hasta);
 	    
-	    if(dao.traerPuestosPorTiempoMontaje(festival, desde, hasta).isEmpty()) {
+	    if (lista.isEmpty()) {
 	    	throw new Exception("No se encontraron PuestoDesarmable cuyo tiempoMontajeMin este entre " + desde + " - " + hasta + " minutos");
 	    }
 	    
-		return dao.traerPuestosPorTiempoMontaje(festival, desde, hasta);
+		return lista;
 	}
 
 	// CONSULTA 2
@@ -171,12 +173,14 @@ public class UnidadVentaABM {
 		if (festival == null) {
 	        throw new Exception("ERROR: El festival ingresado no puede ser nulo");
 	    }
+				
+		List<FoodTruck> lista = dao.traerFoodTrucksConConexionElectrica(festival, requiereConexionElectrica);
 		
-		if(dao.traerFoodTrucksConConexionElectrica(festival, requiereConexionElectrica).isEmpty()) {
+		if (lista.isEmpty()) {
 			throw new Exception("No se encontraron FoodTruck con requiereConexionElectrica = " + requiereConexionElectrica + " para el festival " + festival.getNombre());
 		}
 		
-		return dao.traerFoodTrucksConConexionElectrica(festival, requiereConexionElectrica);
+		return lista;
 	}
 	
 	// CONSULTA 3
@@ -189,12 +193,14 @@ public class UnidadVentaABM {
 	    if (precioMaximo < 0) {
 	        throw new Exception("ERROR: el precio maximo no puede ser negativo");
 	    }
+	    	    
+	    List<FoodTruck> lista = dao.traerFoodTrucksPorFestivalYPrecioPlatoMax(festival, precioMaximo);
 	    
-	    if (dao.traerFoodTrucksPorFestivalYPrecioPlatoMax(festival, precioMaximo).isEmpty()) {
+	    if (lista.isEmpty()) {
 	    	throw new Exception("No se encontraron platos cuyo valor sea menor o igual al precio indicado: $" + precioMaximo);
 	    }
 		
-		return dao.traerFoodTrucksPorFestivalYPrecioPlatoMax(festival, precioMaximo);
+		return lista;
 	}
 		
 	//-------------------------------------------------------------------------------------------
