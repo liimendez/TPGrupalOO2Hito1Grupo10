@@ -10,7 +10,10 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import datos.Cajero;
+import datos.Festival;
 import datos.Pedido;
+import datos.Plato;
+import datos.UnidadVenta;
 
 public class PedidoDao {
 
@@ -212,15 +215,15 @@ public class PedidoDao {
     // muchos detalles apuntan a un plato : DetallePedido -> Plato 
     // =========================================================
 
-    public datos.Festival traerFestivalQueMasRecaudo() {
-        datos.Festival festival = null;
+    public Festival traerFestivalQueMasRecaudo() {
+        Festival festival = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             String hql = "select uv.festival from Pedido ped " +
                          "inner join ped.unidadVenta uv " +
                          "inner join ped.detalles det inner join det.plato pla " +
                          "group by uv.festival.id order by sum(det.cantidad * pla.precioVenta) desc";
-            festival = session.createQuery(hql, datos.Festival.class).setMaxResults(1).uniqueResult();
+            festival = session.createQuery(hql, Festival.class).setMaxResults(1).uniqueResult();
         } finally {
             session.close();
         }
@@ -270,42 +273,42 @@ public class PedidoDao {
         return total != null ? total : 0;
     }
 
-    public datos.Plato traerPlatoMasVendidoEnFestival(long idFestival) {
-        datos.Plato plato = null;
+    public Plato traerPlatoMasVendidoEnFestival(long idFestival) {
+        Plato plato = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             String hql = "select det.plato from Pedido ped inner join ped.unidadVenta uv inner join ped.detalles det " +
                          "where uv.festival.id = :idFestival " +
                          "group by det.plato.id order by sum(det.cantidad) desc";
-            plato = session.createQuery(hql, datos.Plato.class).setParameter("idFestival", idFestival).setMaxResults(1).uniqueResult();
+            plato = session.createQuery(hql, Plato.class).setParameter("idFestival", idFestival).setMaxResults(1).uniqueResult();
         } finally {
             session.close();
         }
         return plato;
     }
 
-    public datos.Plato traerPlatoMasRentableEnFestival(long idFestival) {
-        datos.Plato plato = null;
+    public Plato traerPlatoMasRentableEnFestival(long idFestival) {
+        Plato plato = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             String hql = "select det.plato from Pedido ped inner join ped.unidadVenta uv inner join ped.detalles det inner join det.plato pla " +
                          "where uv.festival.id = :idFestival " +
                          "group by det.plato.id order by sum(det.cantidad * pla.precioVenta) desc";
-            plato = session.createQuery(hql, datos.Plato.class).setParameter("idFestival", idFestival).setMaxResults(1).uniqueResult();
+            plato = session.createQuery(hql, Plato.class).setParameter("idFestival", idFestival).setMaxResults(1).uniqueResult();
         } finally {
             session.close();
         }
         return plato;
     }
 
-    public datos.Cajero traerCajeroQueMasRecaudoEnFestival(long idFestival) {
-        datos.Cajero cajero = null;
+    public Cajero traerCajeroQueMasRecaudoEnFestival(long idFestival) {
+        Cajero cajero = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
             String hql = "select ped.cajero from Pedido ped inner join ped.unidadVenta uv inner join ped.detalles det inner join det.plato pla " +
                          "where uv.festival.id = :idFestival " +
                          "group by ped.cajero.id order by sum(det.cantidad * pla.precioVenta) desc";
-            cajero = session.createQuery(hql, datos.Cajero.class).setParameter("idFestival", idFestival).setMaxResults(1).uniqueResult();
+            cajero = session.createQuery(hql, Cajero.class).setParameter("idFestival", idFestival).setMaxResults(1).uniqueResult();
         } finally {
             session.close();
         }
@@ -351,7 +354,7 @@ public class PedidoDao {
                          "group by ped.cajero.id " +
                          "order by sum(det.cantidad * pla.precioVenta) desc";
                          
-            cajero = session.createQuery(hql, datos.Cajero.class)
+            cajero = session.createQuery(hql, Cajero.class)
                     .setParameter("fechaDesde", fechaDesde)
                     .setParameter("fechaHasta", fechaHasta)
                     .setMaxResults(1)

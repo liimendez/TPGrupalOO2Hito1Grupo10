@@ -170,47 +170,55 @@ public class PedidoABM {
     
     
    /////////////////////metodos para el reporte /////////////////////////////////////////////////////////////
-    
+    // corregido
     
  public Festival traerFestivalQueMasRecaudo() {
 	    return dao.traerFestivalQueMasRecaudo();
 	}
 
-	public double traerRecaudacionDeFestival(long idFestival) {
-	    return dao.calcularRecaudacionPorFestival(idFestival);
+	public double traerRecaudacionDeFestival(Festival festival) {
+	    if (festival == null) throw new IllegalArgumentException("Festival nulo");
+	    return dao.calcularRecaudacionPorFestival(festival.getId());
 	}
 
-	public UnidadVenta traerUnidadQueMasRecaudoEnFestival(long idFestival) {
-	    Object[] data = dao.traerUnidadQueMasRecaudoEnFestival(idFestival);
+	public UnidadVenta traerUnidadQueMasRecaudoEnFestival(Festival festival) {
+	    if (festival == null) throw new IllegalArgumentException("Festival nulo");
+	    Object[] data = dao.traerUnidadQueMasRecaudoEnFestival(festival.getId());
 	    return data!= null? (UnidadVenta) data[0] : null;
 	}
 
-	public double traerRecaudacionUnidadEnFestival(long idFestival, long idUnidad) {
-	    return dao.calcularRecaudacionUnidadEnFestival(idFestival, idUnidad);
+	public double traerRecaudacionUnidadEnFestival(Festival festival, UnidadVenta unidad) {
+	    if (festival == null || unidad == null) throw new IllegalArgumentException("Parametros nulos");
+	    return dao.calcularRecaudacionUnidadEnFestival(festival.getId(), unidad.getId());
 	}
 
-	public Plato traerPlatoMasVendidoEnFestival(long idFestival) {
-	    return dao.traerPlatoMasVendidoEnFestival(idFestival);
+	public double traerRecaudacionDeUnidadTopEnFestival(Festival festival) {
+	    if (festival == null) throw new IllegalArgumentException("Festival nulo");
+	    Object[] data = dao.traerUnidadQueMasRecaudoEnFestival(festival.getId());
+	    if (data!= null && data[1]!= null) {
+	        return (Double) data[1];
+	    }
+	    return 0;
 	}
 
-	public Plato traerPlatoMasRentableEnFestival(long idFestival) {
-	    return dao.traerPlatoMasRentableEnFestival(idFestival);
+	public Plato traerPlatoMasVendidoEnFestival(Festival festival) {
+	    if (festival == null) throw new IllegalArgumentException("Festival nulo");
+	    return dao.traerPlatoMasVendidoEnFestival(festival.getId());
 	}
 
-	public Cajero traerCajeroQueMasRecaudoEnFestival(long idFestival) {
-	    return dao.traerCajeroQueMasRecaudoEnFestival(idFestival);
+	public Plato traerPlatoMasRentableEnFestival(Festival festival) {
+	    if (festival == null) throw new IllegalArgumentException("Festival nulo");
+	    return dao.traerPlatoMasRentableEnFestival(festival.getId());
+	}
+
+	public Cajero traerCajeroQueMasRecaudoEnFestival(Festival festival) {
+	    if (festival == null) throw new IllegalArgumentException("Festival nulo");
+	    return dao.traerCajeroQueMasRecaudoEnFestival(festival.getId());
 	}
  
-    public double calcularRecaudacionPorCajeroEnFestival(long idCajero, long idFestival) {
-        return dao.calcularRecaudacionPorCajeroEnFestival(idCajero, idFestival);
-    }
-
-    public double traerRecaudacionDeUnidadTopEnFestival(long idFestival) {
-        Object[] data = dao.traerUnidadQueMasRecaudoEnFestival(idFestival);
-        if (data!= null && data[1]!= null) {
-            return (Double) data[1];
-        }
-        return 0;
+    public double calcularRecaudacionPorCajeroEnFestival(Cajero cajero, Festival festival) {
+        if (cajero == null || festival == null) throw new IllegalArgumentException("Parametros nulos");
+        return dao.calcularRecaudacionPorCajeroEnFestival(cajero.getId(), festival.getId());
     }
     
     
@@ -228,10 +236,9 @@ public class PedidoABM {
     	return retorno;
     }
 
-    public double calcularRecaudacionPorCajeroEntreDosFechas(long idCajero, LocalDate fechaDesde, LocalDate fechaHasta) {
-    	return dao.calcularRecaudacionPorCajeroEntreDosFechas(idCajero, fechaDesde, fechaHasta);
+    public double calcularRecaudacionPorCajeroEntreDosFechas(Cajero cajero, LocalDate fechaDesde, LocalDate fechaHasta) {
+    	if (cajero == null) throw new IllegalArgumentException("Cajero nulo");
+    	return dao.calcularRecaudacionPorCajeroEntreDosFechas(cajero.getId(), fechaDesde, fechaHasta);
     }
  
-
-
 }
