@@ -119,24 +119,66 @@ SELECT id, nombre_comercial, superficie_m2
 FROM unidad_venta 
 ORDER BY superficie_m2 DESC;
 
-//--------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------------------------------------
 
+SQL TestConsultaMontajeMin: santisosa-gh
+CONSULTA 1: Trae todos los PuestoDesarmable de un Festival que su tiempo de montaje(tiempoMontajeMin) este en un rango indicado.
 
+USE epicentro_gourmet;
 
+SELECT 
+    f.id AS idFestival,
+    f.nombre AS festival_nombre,
+    uv.id AS idUnidadVenta,
+    uv.nombre_comercial,
+    uv.codigo_unico,
+    pd.tiempo_montaje_min,
+    pd.cantidad_carpas
+FROM festival f
+INNER JOIN unidad_venta uv ON f.id = uv.festival_id
+INNER JOIN puesto_desarmable pd ON uv.id = pd.id
+WHERE f.id = 2
+  AND pd.tiempo_montaje_min BETWEEN 20 AND 60;
 
+SQL TestConsultaElectricidad: santisosa-gh
+CONSULTA 2: Trae todos los FoodTruck de un Festival dependiendo si requiere conexion electrica o no(requiereConexionElectrica = TRUE or FALSE).
 
+USE epicentro_gourmet;
 
+SELECT 
+    f.id AS idFestival,
+    f.nombre AS festival_nombre,
+    uv.id AS idUnidadVenta,
+    uv.nombre_comercial,
+    uv.codigo_unico,
+    ft.patente,
+    ft.requiere_conexion_electrica
+FROM festival f
+INNER JOIN unidad_venta uv ON f.id = uv.festival_id
+INNER JOIN food_truck ft ON uv.id = ft.id
+WHERE f.id = 2
+  AND ft.requiere_conexion_electrica = TRUE;
 
+SQL TestConsultaPrecioMaxFT: santisosa-gh
+CONSULTA 3: Trae todos los FoodTruck de un Festival que ofrezcan al menos un Plato con precio de venta menor o igual a un valor indicado (precioMaximo) y al traer esos FoodTruck solo mostrara los platos que no superen dicho valor indicado(precioMaximo).
 
+USE epicentro_gourmet;
 
-
-
-
-
-
-
-
-
-
-
-
+SELECT DISTINCT
+    f.id AS festival_id,
+    f.nombre AS festival_nombre,
+    uv.id AS unidad_venta_id,
+    uv.nombre_comercial,
+    uv.codigo_unico,
+    ft.patente,
+    ft.requiere_conexion_electrica,
+    p.id AS plato_id,
+    p.nombre AS plato_nombre,
+    p.precio_venta
+FROM festival f
+INNER JOIN unidad_venta uv ON f.id = uv.festival_id
+INNER JOIN food_truck ft ON uv.id = ft.id              
+INNER JOIN plato p ON uv.id = p.unidad_venta_id         
+WHERE f.id = 2
+  AND p.precio_venta <= 7500.0
+ORDER BY uv.id, p.precio_venta ASC;
