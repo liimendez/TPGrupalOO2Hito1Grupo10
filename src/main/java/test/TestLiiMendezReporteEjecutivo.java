@@ -9,24 +9,45 @@ import negocio.PedidoABM;
 public class TestLiiMendezReporteEjecutivo {
     public static void main(String[] args) {
         PedidoABM abm = PedidoABM.getInstancia();
-
+        
+        //CU-01: Generar Reporte Ejecutivo de Recaudación - Festival TOP
+       // Es un Caso de Uso de Consulta / Reporte Gerencial.
+        
+        // corregido sin usar id, se pasa el objeto directamente por parametro
+        
         Festival festivalTop = abm.traerFestivalQueMasRecaudo();
-        double recFestival = abm.traerRecaudacionDeFestival(festivalTop.getId());
+        double recFestival = abm.traerRecaudacionDeFestival(festivalTop);
 
-        UnidadVenta unidadTop = abm.traerUnidadQueMasRecaudoEnFestival(festivalTop.getId());
-        double recUnidad = abm.traerRecaudacionDeUnidadTopEnFestival(festivalTop.getId());
+        UnidadVenta unidadTop = abm.traerUnidadQueMasRecaudoEnFestival(festivalTop);
+        double recUnidad = abm.traerRecaudacionUnidadEnFestival(festivalTop, unidadTop);
 
-        Plato masVendido = abm.traerPlatoMasVendidoEnFestival(festivalTop.getId());
-        Plato masRentable = abm.traerPlatoMasRentableEnFestival(festivalTop.getId());
+        Plato masVendido = abm.traerPlatoMasVendidoEnFestival(festivalTop);
+        Plato masRentable = abm.traerPlatoMasRentableEnFestival(festivalTop);
 
-        Cajero cajeroTop = abm.traerCajeroQueMasRecaudoEnFestival(festivalTop.getId());
-        double recCajero = abm.calcularRecaudacionPorCajeroEnFestival(cajeroTop.getId(), festivalTop.getId());
+        Cajero cajeroTop = abm.traerCajeroQueMasRecaudoEnFestival(festivalTop);
+        double recCajero = abm.calcularRecaudacionPorCajeroEnFestival(cajeroTop, festivalTop);
 
-        System.out.println("========== REPORTE EJECUTIVO ==========");
-        System.out.println("Festival TOP: " + festivalTop.getNombre() + " ID:" + festivalTop.getId() + " | Recaudacion: $" + recFestival);
-        System.out.println("Unidad TOP: " + unidadTop.getNombreComercial() + " ID:" + unidadTop.getId() + " | Recaudacion: $" + recUnidad);
-        System.out.println("Plato MAS VENDIDO (cantidad): " + masVendido.getNombre() + " ID:" + masVendido.getId());
-        System.out.println("Plato MAS RENTABLE (cantidad por precio): " + masRentable.getNombre() + " ID:" + masRentable.getId());
-        System.out.println("Cajero TOP en ese festival: " + cajeroTop.getNombre() + " " + cajeroTop.getApellido() + " ID:" + cajeroTop.getId() + " | Recaudo: $" + recCajero);
+       
+        String linea = "════════════════════════════════════════════════════════════";
+        System.out.println("\n" + linea);
+        System.out.println("          REPORTE EJECUTIVO - EPICENTRO GOURMET");
+        System.out.println(linea);
+
+        System.out.printf(" %-20s : %s (ID: %d)%n", "Festival TOP", festivalTop.getNombre(), festivalTop.getId());
+        System.out.printf(" %-20s : $%,.2f%n", "Recaudación Festival", recFestival);
+        System.out.println(" ────────────────────────────────────────────────────────────");
+        System.out.printf(" %-20s : %s (ID: %d)%n", "Unidad TOP", unidadTop.getNombreComercial(), unidadTop.getId());
+        System.out.printf(" %-20s : %s%n", "Tipo Unidad", unidadTop.getClass().getSimpleName());
+        System.out.printf(" %-20s : $%,.2f%n", "Recaudación Unidad", recUnidad);
+        System.out.println(" ────────────────────────────────────────────────────────────");
+        System.out.printf(" %-20s : %s (ID: %d)%n", "Plato + Vendido", masVendido.getNombre(), masVendido.getId());
+        System.out.printf(" %-20s : $%,.2f c/u%n", "Precio Venta", masVendido.getPrecioVenta());
+        System.out.printf(" %-20s : %s (ID: %d)%n", "Plato + Rentable", masRentable.getNombre(), masRentable.getId());
+        System.out.println(" ────────────────────────────────────────────────────────────");
+        System.out.printf(" %-20s : %s %s (ID: %d)%n", "Cajero TOP", cajeroTop.getNombre(), cajeroTop.getApellido(), cajeroTop.getId());
+        System.out.printf(" %-20s : $%,.2f%n", "Recaudado por Cajero", recCajero);
+        System.out.println(linea);
+        System.out.printf(" TOTAL GENERAL FESTIVAL : $%,.2f%n", recFestival);
+        System.out.println(linea + "\n");
     }
 }
