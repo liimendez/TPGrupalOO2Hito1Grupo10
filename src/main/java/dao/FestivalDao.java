@@ -72,7 +72,7 @@ public class FestivalDao {
 
         return festival;
     }
-
+    
     public Set<Festival> traerTodas() {
 
         Set<Festival> set;
@@ -141,5 +141,31 @@ public class FestivalDao {
             session.close();
         }
     }
+    
+    
+  //------------------------------------------------------------------------------------------------------------------------
+  //-------------------------------------------TestFrancoHegele-------------------------------------------------------------
+  //------------------------------------------------------------------------------------------------------------------------  
+    
+    public Festival traerFestival(String nombre) {
+
+        Festival festival = null;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        try {
+        	
+        	String hql = "from Festival f where f.nombre = :nombre";
+            festival = session.createQuery(hql, Festival.class)
+            .setParameter("nombre", nombre)
+            .uniqueResult();
+        } finally {
+            session.close(); 
+        }
+ 
+        return festival; 
+    }
+    
+    
+    
 
 }

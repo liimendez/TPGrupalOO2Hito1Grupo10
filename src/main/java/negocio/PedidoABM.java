@@ -222,23 +222,27 @@ public class PedidoABM {
     }
     
     
-    /////////////////////metodos para el TestFrancoHegele /////////////////////////////////////////////////////////////
-
-    public Cajero traerCajeroQueMasRecaudoEntreFechas(LocalDate fechaDesde, LocalDate fechaHasta)throws Exception {
+//------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------TestFrancoHegele-------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------  
+    
+    public UnidadVenta traerUnidadVentaMasRecaudadoraEnRangoFestival(Festival festival, LocalDate fechaDesde, LocalDate fechaHasta)throws Exception {
     	
-    	Cajero retorno = dao.traerCajeroQueMasRecaudoEntreFechas(fechaDesde, fechaHasta);
-    	
-    	if(retorno == null) {
+    	if(fechaDesde.isBefore(festival.getFechaInicio()) || fechaHasta.isAfter(festival.getFechaFin()) ) {
     		
-        	throw new Exception("\n ERROR: no se registraron transacciones en ese perido de tiempo!!" + 
-        	"\n RECUDACION ---> NULL");
+    		throw new Exception("\n\nERROR: las fechas ingresadas no coinciden con las fechas del festival!!!");
     	}
-    	return retorno;
+    	 
+    	return dao.traerUnidadVentaMasRecaudadoraEnRangoFestival(festival, fechaDesde, fechaHasta);
+    };
+    
+    
+    public double calcularRecaudacionEntreDosFechas(Festival festival, LocalDate fechaDesde, LocalDate fechaHasta)throws Exception {
+    	
+    	if(fechaDesde.isBefore(festival.getFechaInicio()) || fechaHasta.isAfter(festival.getFechaFin()) ) {
+    		
+    		throw new Exception("\n\nERROR: las fechas ingresadas no coinciden con las fechas del festival!!!");
+    	}
+    	return dao.calcularRecaudacionEntreDosFechas(festival, fechaDesde, fechaHasta);
     }
-
-    public double calcularRecaudacionPorCajeroEntreDosFechas(Cajero cajero, LocalDate fechaDesde, LocalDate fechaHasta) {
-    	if (cajero == null) throw new IllegalArgumentException("Cajero nulo");
-    	return dao.calcularRecaudacionPorCajeroEntreDosFechas(cajero.getId(), fechaDesde, fechaHasta);
-    }
- 
 }

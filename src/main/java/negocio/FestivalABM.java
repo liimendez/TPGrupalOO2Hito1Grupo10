@@ -66,7 +66,7 @@ public class FestivalABM {
     public Festival traer(long idFestival) {
         return dao.traer(idFestival);
     }
-
+    
     public Set<Festival> traerTodas() {
         return dao.traerTodas();
     }
@@ -103,7 +103,22 @@ public class FestivalABM {
 
         dao.eliminar(f);
     }
- 
+    
+    
+  //------------------------------------------------------------------------------------------------------------------------
+  //-------------------------------------------TestFrancoHegele-------------------------------------------------------------
+  //------------------------------------------------------------------------------------------------------------------------  
+    
+    public Festival traerFestival(String nombre)throws Exception {
+    	
+    	Festival retorno = dao.traerFestival(nombre);
+    	
+    	if(retorno == null) {
+    		throw new Exception("\n\nERROR: El nombre de ese festival no existe!!!");
+    	}
+    	
+    	return retorno;
+    }
   
 
 }

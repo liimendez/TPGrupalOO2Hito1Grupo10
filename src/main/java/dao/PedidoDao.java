@@ -330,62 +330,81 @@ public class PedidoDao {
     }
     
  
+//------------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------TestFrancoHegele-------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------  
      
-//--------------------------------------------------------------------------------------------------------
-    
-    
-    // =========================================================
-    // TestFrancoHegele.
-    // - Un cajero tiene muchos Pedidos: Cajero (1)-----(*) Pedido.
-    // - Un pedido tiene muchos detalles: Pedido (1)-----(*) DetallePedido.
-    // - Dentro de los detalles de pedido
-    // podemos tener muchos platos: DetallePedido (1)-----(*) Plato.
-    // =========================================================
-    
-    
-    public Cajero traerCajeroQueMasRecaudoEntreFechas(LocalDate fechaDesde, LocalDate fechaHasta) {
-        Cajero cajero = null;
+    public UnidadVenta traerUnidadVentaMasRecaudadoraEnRangoFestival(Festival festival, LocalDate fechaDesde, LocalDate fechaHasta) {
+            
+        UnidadVenta unidad = null;
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            String hql = "select ped.cajero from Pedido ped " +
+            String hql = "select uv from Pedido ped " +
+                         "inner join ped.unidadVenta uv " +
+                         "inner join uv.festival f " +
                          "inner join ped.detalles det " +
                          "inner join det.plato pla " +
-                         "where ped.fechaTransaccion between :fechaDesde and :fechaHasta " +
-                         "group by ped.cajero.id " +
+                         "where f = :festival " + 
+                         "and :fechaDesde >= f.fechaInicio " + 
+                         "and :fechaHasta <= f.fechaFin " +
+                         "and ped.fechaTransaccion between :fechaDesde and :fechaHasta " +
+                         "group by uv.id, uv.nombreComercial " + 
                          "order by sum(det.cantidad * pla.precioVenta) desc";
                          
-            cajero = session.createQuery(hql, Cajero.class)
+            unidad = session.createQuery(hql, UnidadVenta.class)
+                    .setParameter("festival", festival)
                     .setParameter("fechaDesde", fechaDesde)
                     .setParameter("fechaHasta", fechaHasta)
                     .setMaxResults(1)
                     .uniqueResult();
         } finally {
             session.close();
-        } 
-        return cajero;
-    }
+        }
+        return unidad;
+    } 
     
     
-    public double calcularRecaudacionPorCajeroEntreDosFechas(long idCajero, LocalDate fechaDesde, LocalDate fechaHasta) {
-        Double total = 0.0;
+    public double calcularRecaudacionEntreDosFechas(Festival festival, LocalDate fechaDesde, LocalDate fechaHasta) {
+        
+    	Double total = 0.0;
         Session session = HibernateUtil.getSessionFactory().openSession();
         try {
-            String hql = "select sum(det.cantidad * pla.precioVenta) from Pedido ped " +
-                         "inner join ped.detalles det " +
-                         "inner join det.plato pla " +
-                         "where ped.cajero.id = :idCajero " +
-                         "and ped.fechaTransaccion between :fechaDesde and :fechaHasta";
-                         
+        	String hql = "select sum(det.cantidad * pla.precioVenta) from Pedido ped " +
+                    "inner join ped.unidadVenta uv " +
+                    "inner join uv.festival f " +
+                    "inner join ped.detalles det " +
+                    "inner join det.plato pla " +
+                    "where f = :festival " +
+                    "and f.fechaInicio <= :fechaDesde " +
+                    "and f.fechaFin >= :fechaHasta " +
+                    "and ped.fechaTransaccion between :fechaDesde and :fechaHasta " +
+                    "group by uv " + 
+                    "order by sum(det.cantidad * pla.precioVenta) desc"; 
+            
             total = session.createQuery(hql, Double.class)
-                    .setParameter("idCajero", idCajero)
+                    .setParameter("festival", festival)
                     .setParameter("fechaDesde", fechaDesde)
                     .setParameter("fechaHasta", fechaHasta)
+                    .setMaxResults(1)
                     .uniqueResult();
         } finally {
             session.close();
         }
-        return total != null ? total : 0;
+        return total;
     }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
 
 }
